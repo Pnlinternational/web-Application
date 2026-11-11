@@ -6,7 +6,7 @@ export const endpoints = {
     register: "auth/register",
     refresh: "auth/refresh",
     logout: "auth/logout",
-    me: "auth/me",
+    me: "me",
   },
   products: {
     index: "products",
