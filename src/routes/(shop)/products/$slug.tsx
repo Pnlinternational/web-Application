@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { NotFound } from "@/components/errors/not-found";
-import { Button } from "@/components/ui/button";
+import { Button } from "@hackert-ui/ui";
 import { productQueryOptions, useProduct } from "@/features/products/queries";
 import { formatMoney } from "@/lib/currency";
 import { orNotFound } from "@/lib/route-errors";

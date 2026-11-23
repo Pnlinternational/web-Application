@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@hackert-ui/ui";
 import { cn } from "@/lib/cn";
 
 interface ErrorFallbackProps {
@@ -31,7 +31,7 @@ export function ErrorFallback({
       <p className="max-w-prose text-sm text-muted-foreground">{message}</p>
       <div className="flex gap-2">
         {onRetry ? (
-          <Button variant="outline" size="sm" onClick={onRetry}>
+          <Button variant="secondary" size="sm" onClick={onRetry}>
             {retryLabel}
           </Button>
         ) : null}

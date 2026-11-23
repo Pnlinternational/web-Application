@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createIdempotencyKey } from "@/api/idempotency";
-import { Button } from "@/components/ui/button";
+import { Button } from "@hackert-ui/ui";
 import { useLogoutMutation } from "@/features/auth/mutations";
 
 export const Route = createFileRoute("/(shop)/_authed/account/")({
@@ -22,7 +22,7 @@ function AccountPage() {
         View your orders
       </Link>
       <Button
-        variant="outline"
+        variant="secondary"
         loading={logout.isPending}
         onClick={() => logout.mutate(createIdempotencyKey())}
       >

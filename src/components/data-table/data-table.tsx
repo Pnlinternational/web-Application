@@ -10,7 +10,7 @@ import {
   tableFeatures,
   useTable,
 } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
+import { Button } from "@hackert-ui/ui";
 import { cn } from "@/lib/cn";
 
 // Server-driven table: the API sorts and paginates, the table only renders and emits changes.
@@ -134,7 +134,7 @@ export function DataTable<TData extends RowData>({
         </span>
         <div className={cn("flex gap-2")}>
           <Button
-            variant="outline"
+            variant="secondary"
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
@@ -142,7 +142,7 @@ export function DataTable<TData extends RowData>({
             Previous
           </Button>
           <Button
-            variant="outline"
+            variant="secondary"
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}

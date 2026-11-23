@@ -1,3 +1,4 @@
+import { AppProvider } from "@hackert-ui/core";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
@@ -5,6 +6,7 @@ import { createRoot } from "react-dom/client";
 import { AppErrorBoundary } from "@/components/errors/app-error-boundary";
 import { logger } from "@/lib/logger";
 import { queryClient } from "@/lib/query-client";
+import { uiTheme } from "@/lib/ui-theme";
 import { router } from "./router";
 import "./styles/app.css";
 
@@ -20,9 +22,11 @@ if (!rootElement) {
 createRoot(rootElement).render(
   <StrictMode>
     <AppErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
+      <AppProvider theme={uiTheme}>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </AppProvider>
     </AppErrorBoundary>
   </StrictMode>,
 );

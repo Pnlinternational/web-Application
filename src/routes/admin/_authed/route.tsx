@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { NotFound } from "@/components/errors/not-found";
 import { AdminSidebar } from "@/components/layout/admin-sidebar";
-import { Button } from "@/components/ui/button";
+import { Button } from "@hackert-ui/ui";
 import { createIdempotencyKey } from "@/api/idempotency";
 import { useAdminLogoutMutation } from "@/features/admin-auth/mutations";
 import { adminSessionQueryOptions } from "@/features/admin-auth/queries";
@@ -33,7 +33,7 @@ function AdminLayout() {
           <div className="flex flex-col gap-2 text-sm">
             <span className="truncate text-muted-foreground">{admin.name}</span>
             <Button
-              variant="outline"
+              variant="secondary"
               size="sm"
               loading={logout.isPending}
               onClick={() => logout.mutate(createIdempotencyKey())}

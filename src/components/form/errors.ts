@@ -1,22 +1,5 @@
 import { getErrorMessage, isApiError } from "@/api/errors";
 
-/** Field errors can be strings (custom validators) or Standard Schema issues (zod). */
-export function toErrorMessages(errors: readonly unknown[]): string[] {
-  const messages = errors.flatMap((error) => {
-    if (typeof error === "string") return [error];
-    if (
-      error &&
-      typeof error === "object" &&
-      "message" in error &&
-      typeof error.message === "string"
-    ) {
-      return [error.message];
-    }
-    return [];
-  });
-  return [...new Set(messages)];
-}
-
 export interface ServerFormErrors {
   form?: string;
   fields: Record<string, string>;

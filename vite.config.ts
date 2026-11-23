@@ -52,6 +52,9 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
+    // Inlined so the alias below also applies to imports made inside @hackert-ui/*.
+    server: { deps: { inline: [/@hackert-ui/] } },
+    alias: { "@hugeicons/core-free-icons": "/src/test/hugeicons-stub.ts" },
     setupFiles: ["./src/test/setup.ts"],
     include: ["src/**/*.test.{ts,tsx}"],
   },
