@@ -2,8 +2,11 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig, loadEnv, type Plugin } from "vite-plus";
-
-const DEFAULT_API_PROXY_TARGET = "https://api-staging.pnlinternationalltd.com";
+import {
+  DEFAULT_API_PROXY_TARGET,
+  shopTransport,
+  stripBrowserHeaders,
+} from "./config/shop-transport";
 
 // The browser calls same-origin /v1 (API_BASE_URL in src/api/api.ts) and this proxy forwards it
 // to the staging API, adding X-Staging-Key. Behind Cloudflare /v1 is already the same site.
@@ -30,6 +33,8 @@ function stagingApiProxy(): Plugin {
           target: vars.API_PROXY_TARGET || DEFAULT_API_PROXY_TARGET,
           changeOrigin: true,
           headers: { "X-Staging-Key": stagingKey ?? "" },
+          // Auth POSTs are handled by shopTransport() before this proxy; the rest must not look browser-made.
+          configure: stripBrowserHeaders,
         },
       };
       return { server: { proxy }, preview: { proxy } };
@@ -46,6 +51,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
     stagingApiProxy(),
+    shopTransport(),
   ],
   resolve: {
     alias: { "@": "/src" },
@@ -56,7 +62,7 @@ export default defineConfig({
     server: { deps: { inline: [/@hackert-ui/] } },
     alias: { "@hugeicons/core-free-icons": "/src/test/hugeicons-stub.ts" },
     setupFiles: ["./src/test/setup.ts"],
-    include: ["src/**/*.test.{ts,tsx}"],
+    include: ["src/**/*.test.{ts,tsx}", "config/**/*.test.ts"],
   },
   // Run by .husky/pre-commit via `vp staged` (bundled lint-staged): format, lint and fix staged files.
   staged: {

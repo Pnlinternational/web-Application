@@ -1,17 +1,20 @@
-import { type Idempotent, withIdempotencyKey } from "@/api/idempotency";
-import { toServerFormErrors } from "@/components/form/errors";
 import { Form, FormField, useAppForm } from "@hackert-ui/form";
+import { useRef } from "react";
+import { type Idempotent, withIdempotencyKey } from "@/api/idempotency";
+import { toAuthFormErrors } from "../errors";
 import { type LoginInput, loginSchema } from "../schemas";
 
 const defaultValues: LoginInput = { phone: "", password: "" };
 
-interface LoginFormProps {
+interface LoginFormProps<TResult> {
   /** A login mutation's mutateAsync (customer or admin). */
-  onLogin: (variables: Idempotent<LoginInput>) => Promise<unknown>;
-  onSuccess: () => void | Promise<void>;
+  onLogin: (variables: Idempotent<LoginInput>) => Promise<TResult>;
+  /** Gets what onLogin resolved with (the customer flow may still need a code). */
+  onSuccess: (result: TResult) => void | Promise<void>;
 }
 
-export function LoginForm({ onLogin, onSuccess }: LoginFormProps) {
+export function LoginForm<TResult>({ onLogin, onSuccess }: LoginFormProps<TResult>) {
+  const result = useRef<TResult>(undefined as TResult);
   const form = useAppForm({
     defaultValues,
     validators: {
@@ -20,14 +23,14 @@ export function LoginForm({ onLogin, onSuccess }: LoginFormProps) {
       // Each submit is a new user action, so it gets a new idempotency key.
       onSubmitAsync: async ({ value }) => {
         try {
-          await onLogin(withIdempotencyKey(value));
+          result.current = await onLogin(withIdempotencyKey(value));
           return undefined;
         } catch (error) {
-          return toServerFormErrors(error);
+          return toAuthFormErrors(error);
         }
       },
     },
-    onSubmit: () => onSuccess(),
+    onSubmit: () => onSuccess(result.current),
   });
 
   return (

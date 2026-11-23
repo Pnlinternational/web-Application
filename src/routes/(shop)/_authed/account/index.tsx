@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createIdempotencyKey } from "@/api/idempotency";
 import { Button } from "@hackert-ui/ui";
+import { DevicesSection } from "@/features/auth/components/devices-section";
 import { useLogoutMutation } from "@/features/auth/mutations";
 
 export const Route = createFileRoute("/(shop)/_authed/account/")({
@@ -13,11 +14,12 @@ function AccountPage() {
   const logout = useLogoutMutation();
 
   return (
-    <div className="flex flex-col items-start gap-6">
+    <div className="flex max-w-xl flex-col items-start gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Hi, {user.name}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Your account</h1>
         <p className="text-sm text-muted-foreground">{user.phone}</p>
       </div>
+      <DevicesSection />
       <Link to="/account/orders" className="text-sm font-medium text-accent">
         View your orders
       </Link>

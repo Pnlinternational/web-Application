@@ -7,7 +7,12 @@ import type { User } from "@/features/auth/schemas";
 import { routeTree } from "@/routeTree.gen";
 import { createTestQueryClient, renderRouter } from "./render";
 
-const customer: User = { id: "c1", phone: "+2348012345678", name: "Cara" };
+const customer: User = {
+  id: "c1",
+  phone: "+2348012345678",
+  market: "NG",
+  created_at: "2026-01-01T00:00:00Z",
+};
 const admin: AdminUser = { id: "a1", phone: "+2348087654321", name: "Ada" };
 
 // Customer and admin sessions are separate; seed each one's cached session (null = signed out).

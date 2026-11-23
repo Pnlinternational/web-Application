@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { authKeys } from "./query-keys";
 import { getAuthService } from "./services";
 
@@ -14,4 +14,13 @@ export function sessionQueryOptions() {
 /** Non-suspense on purpose: headers render immediately and fill in the account link. */
 export function useSession() {
   return useQuery(sessionQueryOptions());
+}
+
+export function devicesQueryOptions() {
+  const { listDevices } = getAuthService();
+  return queryOptions({ queryKey: authKeys.devices(), queryFn: listDevices });
+}
+
+export function useDevices() {
+  return useSuspenseQuery(devicesQueryOptions());
 }
