@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Design canvas snapshots (read from the claude.ai artifact)
+design/
