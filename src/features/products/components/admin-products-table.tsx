@@ -9,8 +9,8 @@ const column = createDataTableColumnHelper<Product>();
 
 const statusStyles: Record<Product["status"], string> = {
   active: "bg-success/15 text-success",
-  draft: "bg-muted text-muted-foreground",
-  archived: "bg-danger/10 text-danger",
+  draft: "bg-tint text-muted",
+  archived: "bg-danger-tint text-danger-ink",
 };
 
 const columns = column.columns([
@@ -27,9 +27,7 @@ const columns = column.columns([
     header: "Status",
     enableSorting: false,
     cell: (info) => (
-      <span
-        className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusStyles[info.getValue()]}`}
-      >
+      <span className={`rounded-xs px-2 py-0.5 text-badge ${statusStyles[info.getValue()]}`}>
         {info.getValue()}
       </span>
     ),

@@ -5,7 +5,7 @@ export function Checkbox({ className, ...props }: ComponentProps<"input">) {
   return (
     <input
       type="checkbox"
-      className={cn("size-4 rounded border-border accent-primary", className)}
+      className={cn("size-4 border-border accent-primary", className)}
       {...props}
     />
   );

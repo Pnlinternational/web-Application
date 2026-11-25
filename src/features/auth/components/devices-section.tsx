@@ -24,7 +24,7 @@ function Devices() {
 export function DevicesSection() {
   return (
     <section className="flex w-full flex-col gap-3">
-      <h2 className="text-lg font-semibold tracking-tight">Signed-in devices</h2>
+      <h2 className="text-section">Signed-in devices</h2>
       <QueryBoundary pending={<Skeleton className="h-24 w-full" />}>
         <Devices />
       </QueryBoundary>

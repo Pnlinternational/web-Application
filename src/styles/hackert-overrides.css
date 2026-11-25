@@ -1,0 +1,76 @@
+/*
+ * @hackert-ui/form and /ui hardcode zinc neutrals, 14px inputs and a 50% disabled button.
+ * Point them at PNL tokens until the packages expose them. `:root` raises specificity so this
+ * wins over the package's same-layer rule regardless of stylesheet order; utilities still win.
+ */
+@layer components {
+  :root .hui-themed {
+    --hui-text: var(--color-ink);
+    --hui-muted: var(--color-muted);
+    --hui-placeholder: var(--color-muted);
+    --hui-border: var(--color-border);
+    --hui-surface: var(--color-card);
+    --hui-surface-muted: var(--color-disabled);
+  }
+
+  :root .hui-field {
+    gap: calc(var(--spacing) * 1.5);
+  }
+
+  /* 54px fields (design) and 16px minimum so iOS doesn't zoom on focus. */
+  :root .hui-input {
+    min-height: calc(var(--spacing) * 13.5);
+    padding-inline: calc(var(--spacing) * 3.5);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+
+  :root .hui-input[aria-invalid="true"] {
+    border-width: 2px;
+  }
+
+  :root .hui-input-wrapper[data-right-section] {
+    --hui-right-section-width: calc(var(--spacing) * 12);
+  }
+
+  /* Password show/hide: 44px tap target, 22px icon. */
+  :root .hui-section-button {
+    width: calc(var(--spacing) * 11);
+    height: calc(var(--spacing) * 11);
+    color: var(--color-muted);
+  }
+
+  :root .hui-section-button svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  :root .hui-label {
+    font-size: var(--text-label);
+    line-height: var(--text-label--line-height);
+    font-weight: var(--text-label--font-weight);
+  }
+
+  :root .hui-description,
+  :root .hui-error {
+    font-size: var(--text-caption);
+    line-height: var(--text-caption--line-height);
+  }
+
+  :root .hui-error {
+    color: var(--color-danger-ink);
+  }
+
+  :root .hui-dropdown {
+    font-size: var(--text-body-sm);
+    line-height: var(--text-body-sm--line-height);
+  }
+
+  /* Disabled (not loading) buttons use the disabled fill; a loading button keeps its colour. */
+  :root .hui-button:disabled:not([aria-busy]) {
+    background-color: var(--color-disabled);
+    color: var(--color-muted);
+    font-weight: 600;
+    opacity: 1;
+  }
+}

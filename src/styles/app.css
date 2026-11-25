@@ -1,25 +1,96 @@
 @import "tailwindcss";
+@import "./hackert-overrides.css";
 
+/* Theme-covered values come from PNL_THEME via <ThemeVariables /> (--theme-*). Never copy them here. */
+@theme inline {
+  --font-sans: var(--theme-font);
+
+  --color-primary: var(--theme-primary);
+  --color-primary-foreground: var(--theme-primary-fg);
+  --color-primary-hover: var(--theme-primary-hover);
+  --color-secondary: var(--theme-secondary);
+  --color-success: var(--theme-success);
+  --color-success-foreground: var(--theme-success-fg);
+  --color-danger: var(--theme-danger);
+  --color-danger-foreground: var(--theme-danger-fg);
+  --color-warning: var(--theme-warning);
+  --color-warning-foreground: var(--theme-warning-fg);
+  --color-ring: var(--theme-primary);
+
+  --radius-xs: var(--theme-radius-xs);
+  --radius-sm: var(--theme-radius-sm);
+  --radius-md: var(--theme-radius-md);
+  --radius-lg: var(--theme-radius-lg);
+  --radius-xl: var(--theme-radius-xl);
+  --radius-2xl: var(--theme-radius-2xl);
+
+  /* Numeric spacing derives from theme xs (4px): 1/2/3/4/6/8 = xs/sm/md/lg/xl/2xl. */
+  --spacing: var(--theme-spacing-xs);
+}
+
+/* Tokens the theme doesn't cover. Dark values are provisional and unused while the app is light-only. */
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Bricolage Grotesque", system-ui, sans-serif;
 
-  --color-background: oklch(0.99 0 0);
-  --color-foreground: oklch(0.2 0.01 260);
-  --color-muted: oklch(0.96 0.005 260);
-  --color-muted-foreground: oklch(0.5 0.015 260);
-  --color-border: oklch(0.91 0.005 260);
-  --color-ring: oklch(0.55 0.15 260);
-  --color-primary: oklch(0.25 0.02 260);
-  --color-primary-foreground: oklch(0.99 0 0);
-  --color-accent: oklch(0.62 0.17 250);
-  --color-accent-foreground: oklch(0.99 0 0);
-  --color-danger: oklch(0.58 0.2 25);
-  --color-danger-foreground: oklch(0.99 0 0);
-  --color-success: oklch(0.6 0.14 150);
+  --color-ink: light-dark(#141b3c, #e8ebf7);
+  --color-muted: light-dark(#525b7a, #a6aecb);
+  --color-surface: light-dark(#f4f6fb, #0d1230);
+  --color-card: light-dark(#ffffff, #161d42);
+  --color-tint: light-dark(#eef1fa, #1e2651);
+  --color-border: light-dark(#8a93ae, #6e789a);
+  --color-divider: light-dark(#dde1ec, #2b3460);
+  --color-disabled: light-dark(#e4e7f0, #252c52);
+  --color-danger-ink: light-dark(#a70f15, #ff9a9d);
+  --color-danger-tint: light-dark(#fce9ea, #3b1520);
+  /* Navy brand panel (auth): chip fill and sub-text on navy. */
+  --color-primary-chip: #38499a;
+  --color-on-primary-muted: #dde2f4;
 
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
+  /* Larger than radius.2xl, so named rather than hardcoded. */
+  --radius-sheet: 28px;
+  --radius-sheet-auth: 32px;
+
+  --breakpoint-desktop: 56.25rem;
+
+  /* Type scale (rem so the user's browser font size is respected). Only these sizes exist. */
+  --text-*: initial;
+  --text-display: 3.25rem;
+  --text-display--line-height: 3.5rem;
+  --text-display--font-weight: 700;
+  --text-display--letter-spacing: -0.02em;
+  --text-h1: 2rem;
+  --text-h1--line-height: 2.375rem;
+  --text-h1--font-weight: 700;
+  --text-h1--letter-spacing: -0.01em;
+  --text-h2: 1.625rem;
+  --text-h2--line-height: 2rem;
+  --text-h2--font-weight: 600;
+  --text-section: 1.25rem;
+  --text-section--line-height: 1.625rem;
+  --text-section--font-weight: 500;
+  --text-card-title: 1.375rem;
+  --text-card-title--line-height: 1.625rem;
+  --text-card-title--font-weight: 600;
+  --text-price: 1rem;
+  --text-price--line-height: 1.375rem;
+  --text-price--font-weight: 700;
+  --text-lead: 1.0625rem;
+  --text-lead--line-height: 1.625rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.5rem;
+  --text-body-sm: 0.9375rem;
+  --text-body-sm--line-height: 1.375rem;
+  --text-label: 0.875rem;
+  --text-label--line-height: 1.25rem;
+  --text-label--font-weight: 600;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.125rem;
+  --text-meta: 0.75rem;
+  --text-meta--line-height: 1rem;
+  --text-meta--font-weight: 500;
+  --text-badge: 0.6875rem;
+  --text-badge--line-height: 1.125rem;
+  --text-badge--font-weight: 700;
 
   /* Built-in CSS easings are too weak for UI; see emil-design-eng. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -28,13 +99,30 @@
 }
 
 @layer base {
+  :root {
+    /* Light-only until dark designs exist (hackert's light-dark() follows this). */
+    color-scheme: light;
+
+    /* Desktop auth titles scale up at the 900px breakpoint. */
+    @variant desktop {
+      --text-h1: 2.125rem;
+      --text-h1--line-height: 2.5rem;
+    }
+  }
+
   html {
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-surface text-body text-ink font-sans;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-heading);
   }
 
   :focus-visible {

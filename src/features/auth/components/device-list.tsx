@@ -24,27 +24,28 @@ export function DeviceList({
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <ul className="flex flex-col divide-y divide-border rounded-md border border-border">
+      <ul className="flex flex-col divide-y divide-divider rounded-lg border border-divider">
         {devices.map((device) => (
           <li key={device.id} className="flex items-center justify-between gap-3 p-3">
-            <div className="flex flex-col text-sm">
+            <div className="flex flex-col text-body-sm">
               <span className="font-medium">
                 {(device.platform && PLATFORM_LABELS[device.platform]) ?? "Unknown device"}
                 {device.current ? (
-                  <span className="ml-2 rounded-full bg-success/15 px-2 py-0.5 text-xs text-success">
+                  <span className="ml-2 rounded-xs bg-success/15 px-2 py-0.5 text-badge text-success">
                     This device
                   </span>
                 ) : null}
               </span>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-caption text-muted">
                 Signed in {formatDate(device.created_at)} · Active{" "}
                 {formatRelative(device.last_refreshed_at)}
               </span>
             </div>
             {device.current ? null : (
               <Button
-                variant="secondary"
+                variant="danger"
                 size="sm"
+                radius="md"
                 loading={pendingId === device.id}
                 onClick={() => onRevoke(device.id)}
               >
@@ -56,8 +57,9 @@ export function DeviceList({
       </ul>
       {hasOthers ? (
         <Button
-          variant="secondary"
+          variant="danger"
           size="sm"
+          radius="md"
           className="self-start"
           loading={revokingOthers}
           onClick={onRevokeOthers}

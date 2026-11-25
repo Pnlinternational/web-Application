@@ -10,7 +10,7 @@ const links = [
 
 export function AdminSidebar({ footer }: { footer?: React.ReactNode }) {
   return (
-    <aside className="flex w-60 shrink-0 flex-col gap-6 border-r border-border bg-muted/40 p-4">
+    <aside className="flex w-60 shrink-0 flex-col gap-6 border-r border-divider bg-card p-4">
       <Brand to="/admin" />
       <nav className="flex flex-col gap-1">
         {links.map((link) => (

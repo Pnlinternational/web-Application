@@ -20,9 +20,9 @@ function ProductsPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-2xl font-semibold tracking-tight">Products</h1>
+      <h1 className="text-h2">Products</h1>
       {data.items.length === 0 ? (
-        <p className="text-muted-foreground">No products match your search.</p>
+        <p className="text-muted">No products match your search.</p>
       ) : (
         <ul className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
           {data.items.map((product) => (
@@ -32,23 +32,23 @@ function ProductsPage() {
           ))}
         </ul>
       )}
-      <nav aria-label="Pagination" className="flex items-center justify-between text-sm">
+      <nav aria-label="Pagination" className="flex items-center justify-between text-body-sm">
         <Link
           from={Route.fullPath}
           search={(prev) => ({ ...prev, page: prev.page - 1 })}
           disabled={search.page <= 1}
-          className="text-accent aria-disabled:pointer-events-none aria-disabled:opacity-40"
+          className="text-primary aria-disabled:pointer-events-none aria-disabled:opacity-40"
         >
           Previous
         </Link>
-        <span className="text-muted-foreground">
+        <span className="text-muted">
           Page {search.page} of {pageCount}
         </span>
         <Link
           from={Route.fullPath}
           search={(prev) => ({ ...prev, page: prev.page + 1 })}
           disabled={search.page >= pageCount}
-          className="text-accent aria-disabled:pointer-events-none aria-disabled:opacity-40"
+          className="text-primary aria-disabled:pointer-events-none aria-disabled:opacity-40"
         >
           Next
         </Link>

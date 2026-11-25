@@ -30,11 +30,12 @@ function AdminLayout() {
     <div className="flex min-h-dvh">
       <AdminSidebar
         footer={
-          <div className="flex flex-col gap-2 text-sm">
-            <span className="truncate text-muted-foreground">{admin.name}</span>
+          <div className="flex flex-col gap-2 text-body-sm">
+            <span className="truncate text-muted">{admin.name}</span>
             <Button
-              variant="secondary"
+              variant="primary"
               size="sm"
+              radius="md"
               loading={logout.isPending}
               onClick={() => logout.mutate(createIdempotencyKey())}
             >

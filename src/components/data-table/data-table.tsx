@@ -67,10 +67,10 @@ export function DataTable<TData extends RowData>({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="overflow-x-auto rounded-lg border border-border">
-        <table className="w-full text-left text-sm">
+      <div className="overflow-x-auto rounded-lg border border-divider bg-card">
+        <table className="w-full text-left text-body-sm">
           {caption ? <caption className="sr-only">{caption}</caption> : null}
-          <thead className="border-b border-border bg-muted/50 text-muted-foreground">
+          <thead className="border-b border-divider bg-tint text-muted">
             {table.getHeaderGroups().map((group) => (
               <tr key={group.id}>
                 {group.headers.map((header) => {
@@ -88,10 +88,10 @@ export function DataTable<TData extends RowData>({
                         <button
                           type="button"
                           onClick={header.column.getToggleSortingHandler()}
-                          className="inline-flex items-center gap-1 hover-pointer:text-foreground"
+                          className="inline-flex items-center gap-1 hover-pointer:text-ink"
                         >
                           <table.FlexRender header={header} />
-                          <span aria-hidden className="w-3 text-xs">
+                          <span aria-hidden className="w-3 text-meta">
                             {sorted ? sortIndicator[sorted] : ""}
                           </span>
                         </button>
@@ -107,16 +107,13 @@ export function DataTable<TData extends RowData>({
           <tbody>
             {table.getRowModel().rows.length === 0 ? (
               <tr>
-                <td
-                  colSpan={columns.length}
-                  className="px-4 py-10 text-center text-muted-foreground"
-                >
+                <td colSpan={columns.length} className="px-4 py-10 text-center text-muted">
                   {emptyMessage}
                 </td>
               </tr>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="border-b border-border last:border-0">
+                <tr key={row.id} className="border-b border-divider last:border-0">
                   {row.getAllCells().map((cell) => (
                     <td key={cell.id} className="px-4 py-3">
                       <table.FlexRender cell={cell} />
@@ -128,22 +125,24 @@ export function DataTable<TData extends RowData>({
           </tbody>
         </table>
       </div>
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
+      <div className="flex items-center justify-between text-body-sm text-muted">
         <span>
           Page {pagination.pageIndex + 1} of {pageCount} · {rowCount} total
         </span>
         <div className={cn("flex gap-2")}>
           <Button
-            variant="secondary"
+            variant="primary"
             size="sm"
+            radius="md"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
             Previous
           </Button>
           <Button
-            variant="secondary"
+            variant="primary"
             size="sm"
+            radius="md"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >

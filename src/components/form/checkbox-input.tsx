@@ -14,15 +14,16 @@ export function CheckboxInput({ children }: { children: ReactNode }) {
   const hasErrors = useSelector(field.store, (state) => state.meta.errors.length > 0);
 
   return (
-    <label className="flex items-center gap-2 text-sm">
+    <label className="flex min-h-11 items-start gap-2.5 text-caption text-muted">
       <Checkbox
         name={field.name}
         checked={field.state.value}
         onChange={(event) => field.handleChange(event.target.checked)}
         onBlur={field.handleBlur}
         aria-invalid={(hasErrors && (touched || submitted)) || undefined}
+        className="size-5.5 shrink-0"
       />
-      {children}
+      <span>{children}</span>
     </label>
   );
 }

@@ -16,15 +16,16 @@ function AccountPage() {
   return (
     <div className="flex max-w-xl flex-col items-start gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Your account</h1>
-        <p className="text-sm text-muted-foreground">{user.phone}</p>
+        <h1 className="text-h2">Your account</h1>
+        <p className="text-body-sm text-muted">{user.phone}</p>
       </div>
       <DevicesSection />
-      <Link to="/account/orders" className="text-sm font-medium text-accent">
+      <Link to="/account/orders" className="text-label text-primary">
         View your orders
       </Link>
       <Button
-        variant="secondary"
+        variant="primary"
+        radius="md"
         loading={logout.isPending}
         onClick={() => logout.mutate(createIdempotencyKey())}
       >
