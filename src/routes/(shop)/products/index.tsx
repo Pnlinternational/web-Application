@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-router";
 import { isNotFoundError } from "@/api/errors";
 import { RouteErrorComponent } from "@/components/errors/route-error";
+import { CATALOGUE_LIVE } from "@/features/products/constants";
 import { ProductCard } from "@/features/products/components/product-card";
 import { productListQueryOptions, useProductList } from "@/features/products/queries";
 import { productListDefaults, productListParamsSchema } from "@/features/products/schemas";
@@ -21,9 +22,9 @@ export const Route = createFileRoute("/(shop)/products/")({
   errorComponent: ProductsError,
 });
 
-// The API has no catalogue yet and answers 404; the list shows up on its own once it ships.
+// The API has no catalogue yet and answers 404; flip CATALOGUE_LIVE once it ships.
 function ProductsError(props: ErrorComponentProps) {
-  if (!isNotFoundError(props.error)) return <RouteErrorComponent {...props} />;
+  if (CATALOGUE_LIVE || !isNotFoundError(props.error)) return <RouteErrorComponent {...props} />;
 
   return (
     <div className="mx-auto flex max-w-md flex-col items-center gap-3 py-24 text-center">
