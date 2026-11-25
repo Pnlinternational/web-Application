@@ -126,11 +126,27 @@ export const newPasswordSchema = z.object({ password: strongPasswordSchema });
 
 export type NewPasswordInput = z.infer<typeof newPasswordSchema>;
 
-// Only same-origin paths are allowed after login, to avoid open redirects (?redirect=https://evil).
+const REDIRECT_BASE = "https://redirect.invalid";
+
+// Only same-origin paths are allowed after login, to avoid open redirects. Browsers strip tabs and
+// newlines and treat "\" as "/", so "/\evil.com" or "/\t/evil.com" would leave the site.
+function hasBackslashOrControl(path: string) {
+  for (let i = 0; i < path.length; i++) {
+    const code = path.charCodeAt(i);
+    if (code === 0x5c || code <= 0x1f || code === 0x7f) return true;
+  }
+  return false;
+}
+
+function isSafeRedirect(path: string) {
+  if (!path.startsWith("/") || hasBackslashOrControl(path)) return false;
+  try {
+    return new URL(path, REDIRECT_BASE).origin === REDIRECT_BASE;
+  } catch {
+    return false;
+  }
+}
+
 export const redirectSearchSchema = z.object({
-  redirect: z
-    .string()
-    .refine((path) => path.startsWith("/") && !path.startsWith("//"))
-    .optional()
-    .catch(undefined),
+  redirect: z.string().refine(isSafeRedirect).optional().catch(undefined),
 });

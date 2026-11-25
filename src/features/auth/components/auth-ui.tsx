@@ -1,6 +1,6 @@
 import { useFieldContext } from "@hackert-ui/form";
 import { useSelector } from "@tanstack/react-form";
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { SHOW_GOOGLE_SIGN_IN } from "../constants";
 import { checkPassword } from "../password";
@@ -12,11 +12,19 @@ export const AUTH_LINK =
 export const AUTH_BANNER =
   "rounded-md bg-danger-tint px-3.5 py-3 text-label font-medium text-danger-ink";
 
-export function AuthNotice({ children }: { children: ReactNode }) {
+/** The live region stays mounted and its text is filled after mount, so screen readers announce it. */
+export function AuthNotice({ children }: { children?: string }) {
+  const [message, setMessage] = useState("");
+
+  useEffect(() => setMessage(children ?? ""), [children]);
+
   return (
-    <p role="status" className="rounded-md bg-tint px-3.5 py-3 text-label font-medium text-success">
-      {children}
-    </p>
+    <div
+      role="status"
+      className="rounded-md bg-tint px-3.5 py-3 text-label font-medium text-success empty:absolute empty:p-0"
+    >
+      {message}
+    </div>
   );
 }
 
@@ -88,27 +96,43 @@ export function AuthAlternatives({
 export function PasswordChecks() {
   const field = useFieldContext<string>();
   const password = useSelector(field.store, (state) => state.value);
+  const checks = checkPassword(password);
+  const metCount = checks.filter(({ met }) => met).length;
+  const shownCount = useRef(metCount);
+  const [summary, setSummary] = useState("");
+
+  // Announce only when a rule flips, not on every keystroke and not on first render.
+  useEffect(() => {
+    if (shownCount.current === metCount) return;
+    shownCount.current = metCount;
+    setSummary(`${metCount} of ${checks.length} requirements met`);
+  }, [metCount, checks.length]);
 
   return (
-    <ul className="mt-1 flex flex-wrap gap-x-3.5 gap-y-1.5 text-caption">
-      {checkPassword(password).map(({ label, met }) => (
-        <li
-          key={label}
-          className={cn("flex items-center gap-1.5", met ? "text-primary" : "text-muted")}
-        >
-          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24">
-            <circle
-              cx="12"
-              cy="12"
-              r="10.5"
-              strokeWidth="2"
-              className={met ? "fill-primary stroke-primary" : "fill-none stroke-border"}
-            />
-          </svg>
-          <span className="sr-only">{met ? "Done:" : "Still needed:"}</span>
-          {label}
-        </li>
-      ))}
-    </ul>
+    <>
+      <ul className="mt-1 flex flex-wrap gap-x-3.5 gap-y-1.5 text-caption">
+        {checks.map(({ label, met }) => (
+          <li
+            key={label}
+            className={cn("flex items-center gap-1.5", met ? "text-primary" : "text-muted")}
+          >
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24">
+              <circle
+                cx="12"
+                cy="12"
+                r="10.5"
+                strokeWidth="2"
+                className={met ? "fill-primary stroke-primary" : "fill-none stroke-border"}
+              />
+            </svg>
+            <span className="sr-only">{met ? "Done:" : "Still needed:"}</span>
+            {label}
+          </li>
+        ))}
+      </ul>
+      <p role="status" className="sr-only">
+        {summary}
+      </p>
+    </>
   );
 }
