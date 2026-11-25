@@ -1,58 +1,71 @@
 import { Form, FormField, useAppForm } from "@hackert-ui/form";
 import { useRef } from "react";
 import { type Idempotent, withIdempotencyKey } from "@/api/idempotency";
+import { clearSubmitErrors } from "@/components/form/errors";
+import { PhoneInput } from "@/components/form/phone-input";
+import { toE164 } from "@/lib/phone";
 import { toAuthFormErrors } from "../errors";
 import {
   type NewPasswordInput,
   newPasswordSchema,
   type OtpChallenge,
+  type ResetRequestFormValues,
   type ResetRequestInput,
-  resetRequestSchema,
+  resetRequestFormSchema,
 } from "../schemas";
 import type { ResetCompleteResult } from "../services";
+import { AUTH_BANNER, AUTH_PRIMARY_BUTTON, PasswordChecks } from "./auth-ui";
 
 interface RequestResetFormProps {
   onRequest: (variables: Idempotent<ResetRequestInput>) => Promise<OtpChallenge>;
-  onSuccess: (challenge: OtpChallenge) => void;
+  onSuccess: (challenge: OtpChallenge, phone: string) => void;
 }
 
+const requestDefaults: ResetRequestFormValues = { market: "NG", phone: "" };
+
 export function RequestResetForm({ onRequest, onSuccess }: RequestResetFormProps) {
-  const challenge = useRef<OtpChallenge>(undefined as unknown as OtpChallenge);
+  const sent = useRef<{ challenge: OtpChallenge; phone: string }>(undefined);
 
   const form = useAppForm({
-    defaultValues: { phone: "" } satisfies ResetRequestInput,
+    defaultValues: requestDefaults,
     validators: {
-      onChange: resetRequestSchema,
+      onChange: resetRequestFormSchema,
       onSubmitAsync: async ({ value }) => {
+        const phone = toE164(value.market, value.phone);
         try {
-          challenge.current = await onRequest(withIdempotencyKey(value));
+          sent.current = { challenge: await onRequest(withIdempotencyKey({ phone })), phone };
           return undefined;
         } catch (error) {
           return toAuthFormErrors(error);
         }
       },
     },
-    onSubmit: () => onSuccess(challenge.current),
+    listeners: { onChange: clearSubmitErrors },
+    onSubmit: () => {
+      if (sent.current) onSuccess(sent.current.challenge, sent.current.phone);
+    },
   });
 
   return (
     <Form form={form} className="flex flex-col gap-4">
-      <form.FormError />
+      <form.FormError className={AUTH_BANNER} />
       <form.AppField name="phone">
-        {(field) => (
+        {() => (
           <FormField>
             <FormField.Label>Phone number</FormField.Label>
-            <field.TextInput type="tel" autoComplete="tel" />
+            <PhoneInput />
             <FormField.Error />
           </FormField>
         )}
       </form.AppField>
-      <form.SubmitButton className="mt-2">Send code</form.SubmitButton>
+      <form.SubmitButton radius="lg" className={AUTH_PRIMARY_BUTTON}>
+        Send code
+      </form.SubmitButton>
     </Form>
   );
 }
 
-const newPasswordDefaults: NewPasswordInput = { password: "", confirmPassword: "" };
+const newPasswordDefaults: NewPasswordInput = { password: "" };
 
 interface NewPasswordFormProps {
   onComplete: (variables: Idempotent<{ password: string }>) => Promise<ResetCompleteResult>;
@@ -75,32 +88,30 @@ export function NewPasswordForm({ onComplete, onSuccess }: NewPasswordFormProps)
         }
       },
     },
+    listeners: { onChange: clearSubmitErrors },
     onSubmit: () => onSuccess(result.current),
   });
 
   return (
     <Form form={form} className="flex flex-col gap-4">
-      <form.FormError />
+      <form.FormError className={AUTH_BANNER} />
       <form.AppField name="password">
         {(field) => (
           <FormField>
             <FormField.Label>New password</FormField.Label>
-            <field.TextInput type="password" autoComplete="new-password" />
-            <FormField.Description>At least 8 characters.</FormField.Description>
+            <field.TextInput
+              type="password"
+              autoComplete="new-password"
+              placeholder="Create a password"
+            />
+            <PasswordChecks />
             <FormField.Error />
           </FormField>
         )}
       </form.AppField>
-      <form.AppField name="confirmPassword">
-        {(field) => (
-          <FormField>
-            <FormField.Label>Confirm password</FormField.Label>
-            <field.TextInput type="password" autoComplete="new-password" />
-            <FormField.Error />
-          </FormField>
-        )}
-      </form.AppField>
-      <form.SubmitButton className="mt-2">Change password</form.SubmitButton>
+      <form.SubmitButton radius="lg" className={AUTH_PRIMARY_BUTTON}>
+        Update password
+      </form.SubmitButton>
     </Form>
   );
 }

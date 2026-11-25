@@ -111,7 +111,6 @@ describe("toSignupRequest", () => {
     phone: "+2348012345678",
     email: "",
     password: "secret123",
-    confirmPassword: "secret123",
     acceptTerms: true,
     marketingEmail: false,
     marketingSms: false,
