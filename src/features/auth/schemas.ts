@@ -1,5 +1,7 @@
 import { z } from "zod";
 import { tokensSchema } from "@/api/access-token";
+import { type Market, MARKETS, phoneError } from "@/lib/phone";
+import { isStrongPassword, PASSWORD_HINT } from "./password";
 
 export const meSchema = z.object({
   id: z.string(),
@@ -52,19 +54,46 @@ export const deviceListSchema = z.object({
 
 export type Device = z.infer<typeof deviceListSchema>["sessions"][number];
 
-// Digits with an optional leading +, 7–15 digits (E.164 length). Kept loose on purpose:
-// the API's auth.invalid_phone is shown on the field if it disagrees.
-export const phoneSchema = z
-  .string()
-  .trim()
-  .regex(/^\+?[0-9]{7,15}$/, "Enter a valid phone number");
+// API inputs: the phone is E.164 (+234…/+233…).
+export interface LoginInput {
+  phone: string;
+  password: string;
+}
 
-export const loginSchema = z.object({
-  phone: phoneSchema,
-  password: z.string().min(1, "Enter your password"),
-});
+export interface RegisterInput {
+  fullName: string;
+  phone: string;
+  email: string;
+  password: string;
+  acceptTerms: boolean;
+  marketingEmail: boolean;
+  marketingSms: boolean;
+}
 
-export type LoginInput = z.infer<typeof loginSchema>;
+export interface ResetRequestInput {
+  phone: string;
+}
+
+// Forms keep the chosen market and the number as typed; they convert with toE164 on submit.
+const phoneFields = { market: z.enum(MARKETS), phone: z.string() };
+
+// `when` keeps the phone check running while other fields are still invalid.
+function withPhoneCheck<T extends z.ZodType<{ market: Market; phone: string }>>(schema: T) {
+  return schema.refine((value) => phoneError(value.market, value.phone) === undefined, {
+    path: ["phone"],
+    error: (issue) => {
+      const value = issue.input as { market: Market; phone: string };
+      return phoneError(value.market, value.phone);
+    },
+    when: () => true,
+  });
+}
+
+export const loginFormSchema = withPhoneCheck(
+  z.object({ ...phoneFields, password: z.string().min(1, "Enter your password") }),
+);
+
+export type LoginFormValues = z.infer<typeof loginFormSchema>;
 
 export const codeSchema = z.object({
   code: z.string().regex(/^[0-9]{6}$/, "Enter the 6-digit code"),
@@ -72,39 +101,28 @@ export const codeSchema = z.object({
 
 export type CodeInput = z.infer<typeof codeSchema>;
 
-const passwordSchema = z
+const strongPasswordSchema = z
   .string()
-  .min(8, "Use at least 8 characters")
-  .max(128, "Use at most 128 characters");
+  .max(128, "Use at most 128 characters")
+  .refine(isStrongPassword, PASSWORD_HINT);
 
-export const registerSchema = z
-  .object({
+export const signupFormSchema = withPhoneCheck(
+  z.object({
     fullName: z.string().trim().min(2, "Enter your full name").max(120, "That name is too long"),
-    phone: phoneSchema,
     email: z.union([z.literal(""), z.email("Enter a valid email")]),
-    password: passwordSchema,
-    confirmPassword: z.string(),
+    ...phoneFields,
+    password: strongPasswordSchema,
     acceptTerms: z.boolean().refine((accepted) => accepted, "Accept the terms to continue"),
-    marketingEmail: z.boolean(),
-    marketingSms: z.boolean(),
-  })
-  .refine((value) => value.password === value.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+  }),
+);
 
-export type RegisterInput = z.infer<typeof registerSchema>;
+export type SignupFormValues = z.infer<typeof signupFormSchema>;
 
-export const resetRequestSchema = z.object({ phone: phoneSchema });
+export const resetRequestFormSchema = withPhoneCheck(z.object(phoneFields));
 
-export type ResetRequestInput = z.infer<typeof resetRequestSchema>;
+export type ResetRequestFormValues = z.infer<typeof resetRequestFormSchema>;
 
-export const newPasswordSchema = z
-  .object({ password: passwordSchema, confirmPassword: z.string() })
-  .refine((value) => value.password === value.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+export const newPasswordSchema = z.object({ password: strongPasswordSchema });
 
 export type NewPasswordInput = z.infer<typeof newPasswordSchema>;
 

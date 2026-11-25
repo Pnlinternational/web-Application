@@ -20,3 +20,22 @@ export function toServerFormErrors(error: unknown): ServerFormErrors {
   const message = isApiError(error) && error.status < 500 ? error.message : getErrorMessage(error);
   return { form: message, fields: {} };
 }
+
+interface ErrorMapApi {
+  setErrorMap: (errorMap: { onSubmit: undefined }) => void;
+}
+
+/**
+ * Use as the form's `listeners.onChange`: an edit clears the API's answer to the last submit
+ * (the form banner and that field's message), so the user can retry, even with the same value.
+ */
+export function clearSubmitErrors({
+  formApi,
+  fieldApi,
+}: {
+  formApi: ErrorMapApi;
+  fieldApi: ErrorMapApi;
+}) {
+  formApi.setErrorMap({ onSubmit: undefined });
+  fieldApi.setErrorMap({ onSubmit: undefined });
+}

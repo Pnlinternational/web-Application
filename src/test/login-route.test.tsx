@@ -16,6 +16,14 @@ const challenge: OtpChallenge = {
   next: "code",
 };
 
+const signedIn = {
+  access_token: "at-1",
+  access_expires_in: 900,
+  access_expires_at: "2026-01-01T00:15:00Z",
+  session_expires_at: "2026-02-01T00:00:00Z",
+  user: { id: "c1", phone: "+2348012345678", market: "NG", created_at: "2026-01-01T00:00:00Z" },
+};
+
 let fake: ReturnType<typeof installFakeAdapter>;
 
 afterEach(() => {
@@ -39,13 +47,6 @@ async function signIn(user: ReturnType<typeof userEvent.setup>) {
 
 describe("/login", () => {
   it("goes straight to the redirect target on a recognised device (200)", async () => {
-    const signedIn = {
-      access_token: "at-1",
-      access_expires_in: 900,
-      access_expires_at: "2026-01-01T00:15:00Z",
-      session_expires_at: "2026-02-01T00:00:00Z",
-      user: { id: "c1", phone: "+2348012345678", market: "NG", created_at: "2026-01-01T00:00:00Z" },
-    };
     const { router } = visitLogin(
       { "auth/login": [{ status: 200, data: signedIn }] },
       "/login?redirect=%2Faccount%2Forders",
@@ -73,7 +74,6 @@ describe("/login", () => {
 
     await signIn(user);
     await user.type(await screen.findByLabelText("Verification code"), "123456");
-    await user.click(screen.getByRole("button", { name: "Sign in" }));
 
     await waitFor(() => expect(requestsTo(sent, "auth/login/verify")).toHaveLength(1));
     expect(bodyOf(requestsTo(sent, "auth/login/verify")[0])).toEqual({
@@ -82,13 +82,41 @@ describe("/login", () => {
     });
   });
 
-  it("goes back to the credentials on Start again", async () => {
-    visitLogin({ "auth/login": [{ status: 202, data: challenge }] });
+  it("goes back to the credentials on Change phone number", async () => {
+    const { router } = visitLogin({ "auth/login": [{ status: 202, data: challenge }] });
     const user = userEvent.setup();
 
     await signIn(user);
-    await user.click(await screen.findByRole("button", { name: "Start again" }));
+    await waitFor(() => expect(router.state.location.pathname).toBe("/verify"));
+    await user.click(await screen.findByRole("button", { name: "Change phone number" }));
 
+    await waitFor(() => expect(router.state.location.pathname).toBe("/login"));
     expect(await screen.findByLabelText("Password")).toBeTruthy();
+  });
+
+  it("goes Home after sign-in when there is no redirect", async () => {
+    const { router } = visitLogin({ "auth/login": [{ status: 200, data: signedIn }] });
+
+    await signIn(userEvent.setup());
+
+    await waitFor(() => expect(router.state.location.pathname).toBe("/"));
+  });
+
+  it("shows the wrong-details banner", async () => {
+    visitLogin({
+      "auth/login": [{ status: 401, data: errorBody("auth.invalid_credentials", "wrong") }],
+    });
+
+    await signIn(userEvent.setup());
+
+    expect((await screen.findByRole("alert")).textContent).toBe(
+      "Phone number or password is incorrect. Check them and try again.",
+    );
+  });
+
+  it("sends a direct visit to /verify back to sign in", async () => {
+    const { router } = visitLogin({}, "/verify");
+
+    await waitFor(() => expect(router.state.location.pathname).toBe("/login"));
   });
 });
