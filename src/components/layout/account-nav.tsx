@@ -4,9 +4,10 @@ import { NavLink } from "./nav-link";
 
 // GET /me has no name, so the avatar shows a person icon rather than initials.
 export function AccountNav() {
-  const { data: user, isPending } = useSession();
+  const { data: user } = useSession();
 
-  if (isPending) return <span aria-hidden="true" className="ml-2 size-10" />;
+  // undefined: still loading, or the check failed; claim neither signed in nor out.
+  if (user === undefined) return <span aria-hidden="true" className="ml-2 size-10" />;
   if (!user) return <NavLink to="/login">Sign in</NavLink>;
 
   return (
