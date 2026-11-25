@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vp dev",
+    "dev": "vp dev --port 4000",
     "build": "vp build && tsc",
     "preview": "vp preview",
     "prepare": "vp config --hooks-dir .husky --no-agent"
