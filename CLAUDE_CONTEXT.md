@@ -56,6 +56,14 @@
 - **Auth gaps:** `auth.phone_taken` and `auth.code_expired` are unconfirmed guesses (`AUTH_ERROR_CODES`); "tries left"
   comes from the API's `invalid_code` message; no Google endpoint (`SHOW_GOOGLE_SIGN_IN` shows it disabled); `/terms`
   and `/privacy` don't exist.
+- **Open questions for the API team:** the real error codes for a taken phone at signup (`auth.phone_taken`) and an
+  expired OTP (`auth.code_expired`). `errors.test.ts` pins both literal strings, so a rename is a one-line change in
+  `AUTH_ERROR_CODES` plus the test.
+- **Accepted risk, account enumeration:** signup says "This number already has an account." (design copy), so it
+  reveals which numbers are registered. Accepted for now; it relies on API-side rate limiting of `auth/signup`.
+- **Remove when the catalogue ships:** flip `CATALOGUE_LIVE` (`features/products/constants.ts`) to `true`, then delete
+  the constant, the coming-soon branch in `routes/(shop)/products/index.tsx`, and `products-live-route.test.tsx`
+  (and the coming-soon case in `products-route.test.tsx`).
 
 ## API contract
 
