@@ -5,9 +5,9 @@ import { useDashboardStats } from "../queries";
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-border p-5">
-      <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="mt-1 text-2xl font-semibold tabular-nums tracking-tight">{value}</p>
+    <div className="rounded-xl bg-card p-5">
+      <p className="text-body-sm text-muted">{label}</p>
+      <p className="mt-1 font-heading text-h2 tabular-nums">{value}</p>
     </div>
   );
 }

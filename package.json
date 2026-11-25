@@ -10,6 +10,8 @@
     "prepare": "vp config --hooks-dir .husky --no-agent"
   },
   "dependencies": {
+    "@fontsource/bricolage-grotesque": "^5.3.0",
+    "@fontsource/dm-sans": "^5.3.0",
     "@hackert-ui/core": "0.1.0",
     "@hackert-ui/form": "0.1.0",
     "@hackert-ui/hooks": "0.1.0",

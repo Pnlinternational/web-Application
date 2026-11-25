@@ -20,7 +20,7 @@ function AdminProductsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Products</h1>
+      <h1 className="text-h2">Products</h1>
       <AdminProductsTable
         page={data}
         params={params}

@@ -12,7 +12,7 @@ export interface RouterContext {
 
 function DefaultPending() {
   return (
-    <div className="grid min-h-48 place-items-center text-muted-foreground">
+    <div className="grid min-h-48 place-items-center text-muted">
       <Spinner />
     </div>
   );

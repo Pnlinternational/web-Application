@@ -31,16 +31,16 @@ function ProductPage() {
 
   return (
     <article className="grid gap-10 md:grid-cols-2">
-      <div className="aspect-square overflow-hidden rounded-lg bg-muted">
+      <div className="aspect-square overflow-hidden rounded-xl bg-tint">
         {product.imageUrl ? (
           <img src={product.imageUrl} alt={product.name} className="size-full object-cover" />
         ) : null}
       </div>
       <div className="flex flex-col gap-4">
-        <h1 className="text-3xl font-semibold tracking-tight">{product.name}</h1>
-        <p className="text-xl">{formatMoney(product.price)}</p>
-        <p className="text-muted-foreground">{product.description}</p>
-        <Button size="lg" disabled={!inStock} className="mt-4 self-start">
+        <h1 className="text-h2">{product.name}</h1>
+        <p className="font-heading text-card-title text-primary">{formatMoney(product.price)}</p>
+        <p className="text-muted">{product.description}</p>
+        <Button size="lg" radius="lg" disabled={!inStock} className="mt-4 self-start">
           {inStock ? "Add to cart" : "Out of stock"}
         </Button>
       </div>

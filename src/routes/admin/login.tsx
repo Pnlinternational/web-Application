@@ -26,13 +26,13 @@ function AdminLoginPage() {
   const login = useAdminLoginMutation();
 
   return (
-    <div className="grid min-h-dvh place-items-center bg-muted/40 px-4">
+    <div className="grid min-h-dvh place-items-center bg-surface px-4">
       <div className="flex w-full max-w-sm flex-col gap-6">
         <div className="text-center">
           <Brand to="/admin" />
-          <p className="mt-1 text-sm text-muted-foreground">Admin</p>
+          <p className="mt-1 text-body-sm text-muted">Admin</p>
         </div>
-        <div className="rounded-lg border border-border bg-background p-6 shadow-sm">
+        <div className="rounded-sheet-auth bg-card p-6 shadow-sm">
           <LoginForm
             onLogin={login.mutateAsync}
             onSuccess={() => router.navigate({ href: redirectTo ?? "/admin" })}

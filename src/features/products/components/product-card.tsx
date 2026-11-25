@@ -9,7 +9,7 @@ export function ProductCard({ product }: { product: Product }) {
       params={{ slug: product.slug }}
       className="group flex flex-col gap-3"
     >
-      <div className="aspect-square overflow-hidden rounded-lg bg-muted">
+      <div className="aspect-square overflow-hidden rounded-xl bg-tint">
         {product.imageUrl ? (
           <img
             src={product.imageUrl}
@@ -20,8 +20,8 @@ export function ProductCard({ product }: { product: Product }) {
         ) : null}
       </div>
       <div className="flex flex-col gap-0.5">
-        <span className="text-sm font-medium">{product.name}</span>
-        <span className="text-sm text-muted-foreground">{formatMoney(product.price)}</span>
+        <span className="text-body-sm font-medium">{product.name}</span>
+        <span className="text-price text-primary">{formatMoney(product.price)}</span>
       </div>
     </Link>
   );

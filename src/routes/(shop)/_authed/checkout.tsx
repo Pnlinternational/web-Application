@@ -6,5 +6,5 @@ export const Route = createFileRoute("/(shop)/_authed/checkout")({
 });
 
 function CheckoutPage() {
-  return <h1 className="text-2xl font-semibold tracking-tight">Checkout</h1>;
+  return <h1 className="text-h2">Checkout</h1>;
 }
