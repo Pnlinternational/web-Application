@@ -62,6 +62,32 @@ describe("password reset", () => {
     await waitFor(() => expect(router.state.location.pathname).toBe("/new-password"));
   });
 
+  it("replaces the code step, so Back from the new password skips the used key", async () => {
+    const { router } = visitReset({ "auth/password/reset/verify": [setPassword] });
+    const user = userEvent.setup();
+
+    await requestCode(user);
+    await enterCode(user);
+    await waitFor(() => expect(router.state.location.pathname).toBe("/new-password"));
+    router.history.back();
+
+    await waitFor(() => expect(router.state.location.pathname).toBe("/forgot-password"));
+  });
+
+  it("falls back to the start on Change phone number when there is no history", async () => {
+    const { router } = visitReset({});
+    await waitFor(() => expect(router.state.location.pathname).toBe("/forgot-password"));
+    await router.navigate({
+      to: "/reset-code",
+      replace: true,
+      state: { authFlow: { kind: "reset", challenge, phone: "+2348012345678", clientKey: "ck" } },
+    });
+
+    await userEvent.click(await screen.findByRole("button", { name: "Change phone number" }));
+
+    await waitFor(() => expect(router.state.location.pathname).toBe("/forgot-password"));
+  });
+
   it("ties the code check and the password change to one client key", async () => {
     const { sent, router } = visitReset({
       "auth/password/reset/verify": [setPassword],

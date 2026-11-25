@@ -1,6 +1,6 @@
-import { useCanGoBack, useRouter } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useMediaQuery } from "@/lib/use-media-query";
+import { useGoBack } from "../use-go-back";
 
 // Matches --breakpoint-desktop in app.css (900px).
 const DESKTOP_QUERY = "(min-width: 56.25rem)";
@@ -45,14 +45,13 @@ function Arcs() {
 }
 
 function BackButton({ fallback }: { fallback: string }) {
-  const router = useRouter();
-  const canGoBack = useCanGoBack();
+  const goBack = useGoBack(fallback);
 
   return (
     <button
       type="button"
       aria-label="Back"
-      onClick={() => (canGoBack ? router.history.back() : void router.navigate({ href: fallback }))}
+      onClick={goBack}
       className="-ml-2.5 flex size-11 items-center justify-center rounded-full focus-visible:outline-primary-foreground"
     >
       <svg

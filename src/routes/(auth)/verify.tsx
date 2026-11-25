@@ -1,11 +1,13 @@
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { AuthScreen } from "@/features/auth/components/auth-screen";
 import { VerifyCodeForm } from "@/features/auth/components/verify-code-form";
+import { AFTER_SIGN_IN_PATH } from "@/features/auth/constants";
 import {
   useResendCodeMutation,
   useVerifyLoginMutation,
   useVerifySignupMutation,
 } from "@/features/auth/mutations";
+import { useGoBack } from "@/features/auth/use-go-back";
 import { formatE164 } from "@/lib/phone";
 
 // After sign-up, and after sign-in when the API asks for a code (202).
@@ -26,6 +28,7 @@ function VerifyPage() {
   const verifyLogin = useVerifyLoginMutation();
   const verifySignup = useVerifySignupMutation();
   const resend = useResendCodeMutation();
+  const goBack = useGoBack(flow.kind === "signup" ? "/signup" : "/login");
   const verify = flow.kind === "login" ? verifyLogin : verifySignup;
   const challengeId = flow.challenge.challenge_id;
 
@@ -43,9 +46,9 @@ function VerifyPage() {
         onSuccess={() =>
           flow.kind === "signup"
             ? router.navigate({ to: "/verify-identity", replace: true })
-            : router.navigate({ href: redirect ?? "/", replace: true })
+            : router.navigate({ href: redirect ?? AFTER_SIGN_IN_PATH, replace: true })
         }
-        onChangePhone={() => router.history.back()}
+        onChangePhone={goBack}
       />
     </AuthScreen>
   );

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { getErrorMessage } from "@/api/errors";
 import { createIdempotencyKey, type Idempotent, withIdempotencyKey } from "@/api/idempotency";
 import { clearSubmitErrors } from "@/components/form/errors";
+import { cn } from "@/lib/cn";
 import { AUTH_ERROR_CODES, hasAuthErrorCode, toAuthFormErrors } from "../errors";
 import { type CodeInput, codeSchema } from "../schemas";
 import { AUTH_BANNER, AUTH_LINK, AUTH_PRIMARY_BUTTON } from "./auth-ui";
@@ -52,6 +53,8 @@ export function VerifyCodeForm<TResult>({
   const [resending, setResending] = useState(false);
   const [resendError, setResendError] = useState<string>();
   const [expired, setExpired] = useState(false);
+  const [notice, setNotice] = useState("");
+  const codeRef = useRef<HTMLDivElement>(null);
 
   const form = useAppForm({
     defaultValues,
@@ -76,11 +79,14 @@ export function VerifyCodeForm<TResult>({
   async function resend() {
     setResending(true);
     setResendError(undefined);
+    setNotice("");
     try {
       const accepted = await onResend(createIdempotencyKey());
       setRemaining(accepted.resend_after);
       setExpired(false);
       form.reset();
+      setNotice("We sent a new code.");
+      codeRef.current?.querySelector("input")?.focus();
     } catch (error) {
       setResendError(getErrorMessage(error));
     } finally {
@@ -105,13 +111,19 @@ export function VerifyCodeForm<TResult>({
         }}
       >
         {() => (
-          <FormField>
-            <FormField.Label>Verification code</FormField.Label>
-            <OtpInput />
-            <FormField.Error className="text-label font-normal" />
-          </FormField>
+          <div ref={codeRef}>
+            <FormField>
+              <FormField.Label>Verification code</FormField.Label>
+              <OtpInput />
+              <FormField.Error className="text-label font-normal" />
+            </FormField>
+          </div>
         )}
       </form.AppField>
+
+      <p role="status" className="sr-only">
+        {notice}
+      </p>
 
       {expired ? (
         <Button
@@ -123,7 +135,14 @@ export function VerifyCodeForm<TResult>({
           Resend code
         </Button>
       ) : (
-        <form.SubmitButton radius="lg" className={AUTH_PRIMARY_BUTTON} disabled={incomplete}>
+        <form.SubmitButton
+          radius="lg"
+          className={cn(AUTH_PRIMARY_BUTTON, incomplete && "cursor-not-allowed opacity-50")}
+          aria-disabled={incomplete}
+          onClick={(event) => {
+            if (incomplete) event.preventDefault();
+          }}
+        >
           {submitLabel}
         </form.SubmitButton>
       )}

@@ -10,7 +10,7 @@ import { type Market, MARKET_PHONES, MARKETS } from "@/lib/phone";
 export function PhoneInput() {
   const field = useFieldContext<string>();
   const market = useSelector(field.form.store, (state) => state.values.market as Market);
-  const { name, dialCode } = MARKET_PHONES[market];
+  const { dialCode } = MARKET_PHONES[market];
 
   function changeMarket(next: Market) {
     field.form.setFieldValue("market", next);
@@ -44,7 +44,7 @@ export function PhoneInput() {
           <path d="m6 9 6 6 6-6" />
         </svg>
         <select
-          aria-label={`Country code, ${name} selected`}
+          aria-label="Country code"
           value={market}
           onChange={(event) => changeMarket(event.target.value as Market)}
           className="absolute inset-0 cursor-pointer opacity-0"

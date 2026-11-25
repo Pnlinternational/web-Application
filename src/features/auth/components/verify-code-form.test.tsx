@@ -70,12 +70,23 @@ describe("OTP input", () => {
     expect([...digitBoxes()].map((box) => box.textContent)).toEqual(["4", "8", "2", "", "", ""]);
   });
 
-  it("keeps Verify disabled until all six digits are in", async () => {
+  it("marks Verify unavailable, but focusable, until all six digits are in", async () => {
     renderForm();
 
     await userEvent.type(codeInput(), "48219");
 
-    expect(verifyButton().disabled).toBe(true);
+    expect(verifyButton().getAttribute("aria-disabled")).toBe("true");
+    expect(verifyButton().disabled).toBe(false);
+  });
+
+  it("does not submit an incomplete code from the unavailable Verify button", async () => {
+    renderForm();
+
+    await userEvent.type(codeInput(), "48219");
+    await userEvent.click(verifyButton());
+
+    expect(onVerify).not.toHaveBeenCalled();
+    expect(describedText(codeInput())).toBe("");
   });
 
   it("ignores anything that isn't a digit", async () => {
@@ -171,6 +182,21 @@ describe("resend", () => {
     passSeconds(58);
 
     expect(screen.getByRole("button", { name: "Resend code" })).toBeTruthy();
+  });
+
+  it("announces the new code and puts focus back on the code input", async () => {
+    onVerify.mockRejectedValue(
+      new ApiError({ status: 410, code: "auth.code_expired", message: "expired" }),
+    );
+    renderForm(30);
+    const status = screen.getByRole("status");
+    expect(status.textContent).toBe("");
+
+    await userEvent.type(codeInput(), "482196");
+    await userEvent.click(await screen.findByRole("button", { name: "Resend code" }));
+
+    await waitFor(() => expect(status.textContent).toBe("We sent a new code."));
+    expect(document.activeElement).toBe(codeInput());
   });
 
   it("restarts the countdown from the new resend_after", async () => {

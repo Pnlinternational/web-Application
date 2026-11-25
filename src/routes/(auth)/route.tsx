@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { AFTER_SIGN_IN_PATH } from "@/features/auth/constants";
 import { sessionQueryOptions } from "@/features/auth/queries";
 import { redirectSearchSchema } from "@/features/auth/schemas";
 
@@ -9,7 +10,7 @@ export const Route = createFileRoute("/(auth)")({
   beforeLoad: async ({ context, search }) => {
     const user = await context.queryClient.query({ ...sessionQueryOptions(), staleTime: "static" });
     if (user) {
-      throw redirect({ href: search.redirect ?? "/account" });
+      throw redirect({ href: search.redirect ?? AFTER_SIGN_IN_PATH });
     }
   },
   component: Outlet,

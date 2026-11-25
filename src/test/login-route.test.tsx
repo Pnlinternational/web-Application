@@ -94,12 +94,40 @@ describe("/login", () => {
     expect(await screen.findByLabelText("Password")).toBeTruthy();
   });
 
-  it("goes Home after sign-in when there is no redirect", async () => {
+  it("goes to the account page after sign-in when there is no redirect", async () => {
     const { router } = visitLogin({ "auth/login": [{ status: 200, data: signedIn }] });
 
     await signIn(userEvent.setup());
 
-    await waitFor(() => expect(router.state.location.pathname).toBe("/"));
+    await waitFor(() => expect(router.state.location.pathname).toBe("/account"));
+  });
+
+  it("falls back to sign in on Change phone number when there is no history", async () => {
+    const { router } = visitLogin({});
+    await waitFor(() => expect(router.state.location.pathname).toBe("/login"));
+    await router.navigate({
+      to: "/verify",
+      replace: true,
+      state: { authFlow: { kind: "login", challenge, phone: "+2348012345678" } },
+    });
+
+    await userEvent.click(await screen.findByRole("button", { name: "Change phone number" }));
+
+    await waitFor(() => expect(router.state.location.pathname).toBe("/login"));
+  });
+
+  it("falls back to sign up on Change phone number after a sign-up with no history", async () => {
+    const { router } = visitLogin({});
+    await waitFor(() => expect(router.state.location.pathname).toBe("/login"));
+    await router.navigate({
+      to: "/verify",
+      replace: true,
+      state: { authFlow: { kind: "signup", challenge, phone: "+2348012345678" } },
+    });
+
+    await userEvent.click(await screen.findByRole("button", { name: "Change phone number" }));
+
+    await waitFor(() => expect(router.state.location.pathname).toBe("/signup"));
   });
 
   it("shows the wrong-details banner", async () => {

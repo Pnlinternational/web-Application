@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useLocation, useRouter } from "@tanstack/react-router";
 import { AuthScreen } from "@/features/auth/components/auth-screen";
 import { AUTH_LINK, AuthAlternatives, AuthNotice } from "@/features/auth/components/auth-ui";
+import { AFTER_SIGN_IN_PATH } from "@/features/auth/constants";
 import { LoginForm } from "@/features/auth/components/login-form";
 import { useLoginMutation } from "@/features/auth/mutations";
 
@@ -17,7 +18,7 @@ function LoginPage() {
 
   return (
     <AuthScreen title="Welcome back" subtitle="Sign in to track orders and check out faster.">
-      {notice ? <AuthNotice>{notice}</AuthNotice> : null}
+      <AuthNotice>{notice}</AuthNotice>
       <LoginForm
         onLogin={login.mutateAsync}
         onSuccess={(result, input) =>
@@ -29,7 +30,7 @@ function LoginPage() {
                   authFlow: { kind: "login", challenge: result.challenge, phone: input.phone },
                 },
               })
-            : router.navigate({ href: redirect ?? "/" })
+            : router.navigate({ href: redirect ?? AFTER_SIGN_IN_PATH })
         }
         passwordHelp={
           <Link to="/forgot-password" className={`${AUTH_LINK} text-label`}>

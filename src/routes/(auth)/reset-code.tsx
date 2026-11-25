@@ -4,6 +4,7 @@ import { AuthScreen } from "@/features/auth/components/auth-screen";
 import { AUTH_LINK } from "@/features/auth/components/auth-ui";
 import { VerifyCodeForm } from "@/features/auth/components/verify-code-form";
 import { useResendCodeMutation, useVerifyPasswordResetMutation } from "@/features/auth/mutations";
+import { useGoBack } from "@/features/auth/use-go-back";
 import { formatE164 } from "@/lib/phone";
 
 export const Route = createFileRoute("/(auth)/reset-code")({
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/(auth)/reset-code")({
 function ResetCodePage() {
   const router = useRouter();
   const { flow } = Route.useRouteContext();
+  const goBack = useGoBack("/forgot-password");
   const verify = useVerifyPasswordResetMutation();
   const resend = useResendCodeMutation();
   const [needsSupport, setNeedsSupport] = useState(false);
@@ -58,13 +60,14 @@ function ResetCodePage() {
           granted.next === "set_password"
             ? router.navigate({
                 to: "/new-password",
+                replace: true,
                 state: {
                   authFlow: { kind: "reset-granted", phone: flow.phone, clientKey: flow.clientKey },
                 },
               })
             : setNeedsSupport(true)
         }
-        onChangePhone={() => router.history.back()}
+        onChangePhone={goBack}
       />
     </AuthScreen>
   );

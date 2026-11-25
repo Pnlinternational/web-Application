@@ -72,6 +72,17 @@ describe("auth pages", () => {
     expect((await settledLocation(router)).pathname).toBe("/account");
   });
 
+  it.each([
+    ["a backslash", "/%5Cevil.example"],
+    ["a tab", "/%09/evil.example"],
+    ["a newline", "/%0A/evil.example"],
+    ["a scheme", "https%3A%2F%2Fevil.example"],
+    ["a relative path", "evil"],
+  ])("ignores a redirect with %s", async (_, redirect) => {
+    const { router } = visit(`/login?redirect=${redirect}`, { customer });
+    expect((await settledLocation(router)).pathname).toBe("/account");
+  });
+
   it("sends signed-in admins to the dashboard", async () => {
     const { router } = visit("/admin/login", { admin });
     expect((await settledLocation(router)).pathname).toBe("/admin");
