@@ -6,7 +6,16 @@
 - **One app, route groups:** `(marketing)` landing, `(shop)` + `(auth)` customer, `admin/` admin. Guards live in
   pathless `_authed/route.tsx` `beforeLoad`s; areas are code-split via `autoCodeSplitting`.
 - **UI:** `@hackert-ui/*` (your library, pinned, exempt from pnpm's release-age delay) for forms, used as documented
-  (`useAppForm`, `Form`, `FormField` + `field.TextInput`, no local wrappers), `Button` and `Card`; `AppProvider` theme in `src/lib/ui-theme.ts` duplicates `app.css` token values.
+  (`useAppForm`, `Form`, `FormField` + `field.TextInput`, no local wrappers), `Button` and `Card`; `PNL_THEME` (`src/lib/ui-theme.ts`) is the only source for colours, radius, spacing and body font.
+- **Theme bridge:** `ThemeVariables` (`src/components/theme/`) reads `useAppTheme()`/`useVariantColors()` and writes
+  `--theme-*` vars (`light-dark()` pairs); `app.css` `@theme inline` maps Tailwind tokens onto them. Tokens the theme
+  lacks (neutrals with provisional dark values, `font-heading` Bricolage, `radius-sheet*`, type scale `text-display…badge`,
+  `desktop:` = 900px) live in `app.css @theme`. Only the type-scale sizes exist (`--text-*: initial`). `cn` registers them
+  with tailwind-merge. `hackert-overrides.css` points `@hackert-ui/form`'s hardcoded neutrals and 14px inputs at tokens.
+- **Contrast rule:** never put text on `variant="secondary"` (brand red: near-black text 4.53, flips to white on hover,
+  3.14 on touch press; guarded by `src/test/theme-contrast.test.tsx`). Actions use primary, red text-bearing use danger.
+  Warning text fails on `tint` (4.45); `border` fails 3:1 on `surface` (inputs sit on `card`).
+- **Fonts:** Fontsource static packages. DM Sans has no ₦/₵ glyphs (falls back to `system-ui`); Bricolage has both.
   Local Checkbox (`CheckboxInput` on hackert's `useFieldContext`), Spinner and Skeleton remain until hackert-ui
   ships them. Dates go through dayjs (`src/lib/format.ts`).
 - **Originally hand-rolled UI** on Tailwind v4 tokens (`src/styles/app.css`), Emil-style motion (custom ease curves,
@@ -35,9 +44,25 @@
   `RouteErrorComponent` for loaders, `AppErrorBoundary` as last resort; toasts only for background
   refetch and non-silent mutation failures.
 
+- **Auth screens (web):** built from the Claude Design canvas "PNL Intro and Auth" (`design/` holds a gitignored
+  snapshot; `project/web/WebAuth.dc.html` is the source of truth). One route per step: `/login`, `/signup`, `/verify`
+  (signup, and login 202), `/forgot-password`, `/reset-code`, `/new-password`; `/verify-identity` is a placeholder.
+  Steps hand over `{ challenge, phone, clientKey }` in router history state (`features/auth/flow.ts`), never the code
+  or password; a later step without it redirects to the flow start. `AuthScreen` renders the navy header/panel and
+  sheet; the title renders once (`useMediaQuery` picks header vs panel). Forms hold `market` + the number as typed and
+  convert with `toE164` (`lib/phone.ts`) on submit, so services still get E.164. `PhoneInput`/`OtpInput` wrap hackert's
+  own `TextInput` (label/error wiring) with a country `<select>` / six display boxes. `clearSubmitErrors` (form
+  `listeners.onChange`) clears API errors on edit. Password rules: `features/auth/password.ts`.
+- **Auth gaps:** `auth.phone_taken` and `auth.code_expired` are unconfirmed guesses (`AUTH_ERROR_CODES`); "tries left"
+  comes from the API's `invalid_code` message; no Google endpoint (`SHOW_GOOGLE_SIGN_IN` shows it disabled); `/terms`
+  and `/privacy` don't exist.
+
 ## API contract
 
-- Source of truth: staging OpenAPI at `/v1/docs/openapi.json` (needs the staging key; via the dev proxy).
+- Source of truth: staging OpenAPI at `https://api-staging.pnlinternationalltd.com/docs/openapi.json` (outside `/v1`,
+  so not through the dev proxy; send `X-Staging-Key`). Swagger UI at `/docs/`.
+- As of 2026-11-25 the API has no catalogue, cart, order or stats endpoints, so `products` → 404 `not_found` and the
+  products page renders the 404 screen. Admin has only `admin/auth/{login,logout,factor}`; no `refresh` or `me`.
 - Confirmed: error envelope `{ error: { code, message, request_id } }` with a closed set of codes; POST/DELETE need
   an `Idempotency-Key` of 16–128 chars; login is by NG/GH phone + password.
 - Customer auth: `auth/login` → 200 `SignedIn` or 202 `OtpChallenge` → `auth/login/verify`; `auth/signup` →
@@ -85,3 +110,14 @@
 - Route tests go in `src/test/`, not `src/routes/` (the router plugin treats any file there as a route).
 - Form submit-time field errors block resubmitting the _same_ value (e.g. the same wrong OTP): the click looks
   ignored. Undecided whether to keep it.
+- **Redirected:** I recommended staying light-only until dark designs exist; you chose dark mode now with provisional
+  neutrals (`color-scheme: light dark`).
+- **Redirected:** I treated the "shared foundation" brief as tokens-only and reskinned the old auth layout; you expected
+  the screens to match the canvas (split navy hero + form, phone with country picker, OTP boxes, error banner, mobile
+  sheet). When a brief mentions a canvas/design, get the design source before touching screens.
+- TanStack Form never clears `onSubmit` (API) errors on change: that is why a wrong OTP blocked resubmitting. Fixed
+  with `clearSubmitErrors` on every auth form.
+- **Redirected:** you chose light-only after seeing dark mode, "Show, disabled" for Google, and a full design-driven
+  rebuild of auth from the canvas rather than token-only restyling.
+- Headless Chrome (`--headless=new`) won't lay out narrower than 500px; for phone widths drive it over CDP with
+  `Emulation.setDeviceMetricsOverride`.
