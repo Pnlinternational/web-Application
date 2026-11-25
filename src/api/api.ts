@@ -77,7 +77,7 @@ interface AuthRefreshOptions {
 const REFRESH_LOCK = "pnl-auth-refresh";
 
 // Refresh tokens rotate, so two tabs refreshing at once would invalidate each other.
-function withRefreshLock<T>(fn: () => Promise<T>): Promise<T> {
+async function withRefreshLock<T>(fn: () => Promise<T>): Promise<T> {
   return typeof navigator !== "undefined" && "locks" in navigator
     ? navigator.locks.request(REFRESH_LOCK, fn)
     : fn();
