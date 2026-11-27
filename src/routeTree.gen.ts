@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as authRouteRouteImport } from './routes/(auth)/route'
 import { Route as marketingRouteRouteImport } from './routes/(marketing)/route'
 import { Route as shopRouteRouteImport } from './routes/(shop)/route'
+import { Route as accountAccountRouteRouteImport } from './routes/(account)/account/route'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authNewPasswordRouteImport } from './routes/(auth)/new-password'
@@ -21,18 +22,32 @@ import { Route as authVerifyRouteImport } from './routes/(auth)/verify'
 import { Route as marketingIndexRouteImport } from './routes/(marketing)/index'
 import { Route as shopAuthedRouteRouteImport } from './routes/(shop)/_authed/route'
 import { Route as shopCartRouteImport } from './routes/(shop)/cart'
+import { Route as shopHelpRouteImport } from './routes/(shop)/help'
 import { Route as AdminAuthedRouteRouteImport } from './routes/admin/_authed/route'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as accountAccountIndexRouteImport } from './routes/(account)/account/index'
+import { Route as accountAccountAuthedRouteRouteImport } from './routes/(account)/account/_authed/route'
+import { Route as accountAccountFavouritesRouteImport } from './routes/(account)/account/favourites'
 import { Route as shopAuthedCheckoutRouteImport } from './routes/(shop)/_authed/checkout'
 import { Route as shopAuthedVerifyIdentityRouteImport } from './routes/(shop)/_authed/verify-identity'
 import { Route as shopProductsIndexRouteImport } from './routes/(shop)/products/index'
 import { Route as shopProductsSlugRouteImport } from './routes/(shop)/products/$slug'
 import { Route as AdminAuthedIndexRouteImport } from './routes/admin/_authed/index'
-import { Route as shopAuthedAccountIndexRouteImport } from './routes/(shop)/_authed/account/index'
+import { Route as accountAccountAuthedNotificationsRouteImport } from './routes/(account)/account/_authed/notifications'
+import { Route as accountAccountAuthedPhoneRouteImport } from './routes/(account)/account/_authed/phone'
+import { Route as accountAccountAuthedProfileRouteImport } from './routes/(account)/account/_authed/profile'
+import { Route as accountAccountAuthedRefundsRouteImport } from './routes/(account)/account/_authed/refunds'
+import { Route as accountAccountAuthedSecurityRouteImport } from './routes/(account)/account/_authed/security'
+import { Route as accountAccountAuthedTicketsRouteImport } from './routes/(account)/account/_authed/tickets'
+import { Route as accountAccountAuthedVerifyEmailRouteImport } from './routes/(account)/account/_authed/verify-email'
+import { Route as accountAccountAuthedWalletRouteImport } from './routes/(account)/account/_authed/wallet'
 import { Route as shopAuthedAccountOrdersRouteImport } from './routes/(shop)/_authed/account/orders'
 import { Route as AdminAuthedCustomersIndexRouteImport } from './routes/admin/_authed/customers/index'
 import { Route as AdminAuthedOrdersIndexRouteImport } from './routes/admin/_authed/orders/index'
 import { Route as AdminAuthedProductsIndexRouteImport } from './routes/admin/_authed/products/index'
+import { Route as accountAccountAuthedAddressesIndexRouteImport } from './routes/(account)/account/_authed/addresses/index'
+import { Route as accountAccountAuthedAddressesNewRouteImport } from './routes/(account)/account/_authed/addresses/new'
+import { Route as accountAccountAuthedAddressesAddressIdEditRouteImport } from './routes/(account)/account/_authed/addresses/$addressId.edit'
 
 const authRouteRoute = authRouteRouteImport.update({
   id: '/(auth)',
@@ -44,6 +59,11 @@ const marketingRouteRoute = marketingRouteRouteImport.update({
 } as any)
 const shopRouteRoute = shopRouteRouteImport.update({
   id: '/(shop)',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const accountAccountRouteRoute = accountAccountRouteRouteImport.update({
+  id: '/(account)/account',
+  path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authForgotPasswordRoute = authForgotPasswordRouteImport.update({
@@ -90,6 +110,11 @@ const shopCartRoute = shopCartRouteImport.update({
   path: '/cart',
   getParentRoute: () => shopRouteRoute,
 } as any)
+const shopHelpRoute = shopHelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => shopRouteRoute,
+} as any)
 const AdminAuthedRouteRoute = AdminAuthedRouteRouteImport.update({
   id: '/admin/_authed',
   path: '/admin',
@@ -100,6 +125,22 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const accountAccountIndexRoute = accountAccountIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => accountAccountRouteRoute,
+} as any)
+const accountAccountAuthedRouteRoute =
+  accountAccountAuthedRouteRouteImport.update({
+    id: '/_authed',
+    getParentRoute: () => accountAccountRouteRoute,
+  } as any)
+const accountAccountFavouritesRoute =
+  accountAccountFavouritesRouteImport.update({
+    id: '/favourites',
+    path: '/favourites',
+    getParentRoute: () => accountAccountRouteRoute,
+  } as any)
 const shopAuthedCheckoutRoute = shopAuthedCheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
@@ -126,11 +167,54 @@ const AdminAuthedIndexRoute = AdminAuthedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminAuthedRouteRoute,
 } as any)
-const shopAuthedAccountIndexRoute = shopAuthedAccountIndexRouteImport.update({
-  id: '/account/',
-  path: '/account/',
-  getParentRoute: () => shopAuthedRouteRoute,
-} as any)
+const accountAccountAuthedNotificationsRoute =
+  accountAccountAuthedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => accountAccountAuthedRouteRoute,
+  } as any)
+const accountAccountAuthedPhoneRoute =
+  accountAccountAuthedPhoneRouteImport.update({
+    id: '/phone',
+    path: '/phone',
+    getParentRoute: () => accountAccountAuthedRouteRoute,
+  } as any)
+const accountAccountAuthedProfileRoute =
+  accountAccountAuthedProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => accountAccountAuthedRouteRoute,
+  } as any)
+const accountAccountAuthedRefundsRoute =
+  accountAccountAuthedRefundsRouteImport.update({
+    id: '/refunds',
+    path: '/refunds',
+    getParentRoute: () => accountAccountAuthedRouteRoute,
+  } as any)
+const accountAccountAuthedSecurityRoute =
+  accountAccountAuthedSecurityRouteImport.update({
+    id: '/security',
+    path: '/security',
+    getParentRoute: () => accountAccountAuthedRouteRoute,
+  } as any)
+const accountAccountAuthedTicketsRoute =
+  accountAccountAuthedTicketsRouteImport.update({
+    id: '/tickets',
+    path: '/tickets',
+    getParentRoute: () => accountAccountAuthedRouteRoute,
+  } as any)
+const accountAccountAuthedVerifyEmailRoute =
+  accountAccountAuthedVerifyEmailRouteImport.update({
+    id: '/verify-email',
+    path: '/verify-email',
+    getParentRoute: () => accountAccountAuthedRouteRoute,
+  } as any)
+const accountAccountAuthedWalletRoute =
+  accountAccountAuthedWalletRouteImport.update({
+    id: '/wallet',
+    path: '/wallet',
+    getParentRoute: () => accountAccountAuthedRouteRoute,
+  } as any)
 const shopAuthedAccountOrdersRoute = shopAuthedAccountOrdersRouteImport.update({
   id: '/account/orders',
   path: '/account/orders',
@@ -153,9 +237,28 @@ const AdminAuthedProductsIndexRoute =
     path: '/products/',
     getParentRoute: () => AdminAuthedRouteRoute,
   } as any)
+const accountAccountAuthedAddressesIndexRoute =
+  accountAccountAuthedAddressesIndexRouteImport.update({
+    id: '/addresses/',
+    path: '/addresses/',
+    getParentRoute: () => accountAccountAuthedRouteRoute,
+  } as any)
+const accountAccountAuthedAddressesNewRoute =
+  accountAccountAuthedAddressesNewRouteImport.update({
+    id: '/addresses/new',
+    path: '/addresses/new',
+    getParentRoute: () => accountAccountAuthedRouteRoute,
+  } as any)
+const accountAccountAuthedAddressesAddressIdEditRoute =
+  accountAccountAuthedAddressesAddressIdEditRouteImport.update({
+    id: '/addresses/$addressId/edit',
+    path: '/addresses/$addressId/edit',
+    getParentRoute: () => accountAccountAuthedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof marketingIndexRoute
+  '/account': typeof accountAccountRouteRouteWithChildren
   '/admin': typeof AdminAuthedRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
   '/login': typeof authLoginRoute
@@ -164,17 +267,30 @@ export interface FileRoutesByFullPath {
   '/signup': typeof authSignupRoute
   '/verify': typeof authVerifyRoute
   '/cart': typeof shopCartRoute
+  '/help': typeof shopHelpRoute
   '/admin/login': typeof AdminLoginRoute
+  '/account/favourites': typeof accountAccountFavouritesRoute
   '/checkout': typeof shopAuthedCheckoutRoute
   '/verify-identity': typeof shopAuthedVerifyIdentityRoute
   '/products/$slug': typeof shopProductsSlugRoute
+  '/account/': typeof accountAccountIndexRoute
   '/products/': typeof shopProductsIndexRoute
   '/admin/': typeof AdminAuthedIndexRoute
+  '/account/notifications': typeof accountAccountAuthedNotificationsRoute
+  '/account/phone': typeof accountAccountAuthedPhoneRoute
+  '/account/profile': typeof accountAccountAuthedProfileRoute
+  '/account/refunds': typeof accountAccountAuthedRefundsRoute
+  '/account/security': typeof accountAccountAuthedSecurityRoute
+  '/account/tickets': typeof accountAccountAuthedTicketsRoute
+  '/account/verify-email': typeof accountAccountAuthedVerifyEmailRoute
+  '/account/wallet': typeof accountAccountAuthedWalletRoute
   '/account/orders': typeof shopAuthedAccountOrdersRoute
-  '/account/': typeof shopAuthedAccountIndexRoute
   '/admin/customers/': typeof AdminAuthedCustomersIndexRoute
   '/admin/orders/': typeof AdminAuthedOrdersIndexRoute
   '/admin/products/': typeof AdminAuthedProductsIndexRoute
+  '/account/addresses/new': typeof accountAccountAuthedAddressesNewRoute
+  '/account/addresses/': typeof accountAccountAuthedAddressesIndexRoute
+  '/account/addresses/$addressId/edit': typeof accountAccountAuthedAddressesAddressIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof marketingIndexRoute
@@ -185,23 +301,37 @@ export interface FileRoutesByTo {
   '/signup': typeof authSignupRoute
   '/verify': typeof authVerifyRoute
   '/cart': typeof shopCartRoute
+  '/help': typeof shopHelpRoute
   '/admin/login': typeof AdminLoginRoute
+  '/account': typeof accountAccountIndexRoute
+  '/account/favourites': typeof accountAccountFavouritesRoute
   '/checkout': typeof shopAuthedCheckoutRoute
   '/verify-identity': typeof shopAuthedVerifyIdentityRoute
   '/products/$slug': typeof shopProductsSlugRoute
   '/products': typeof shopProductsIndexRoute
   '/admin': typeof AdminAuthedIndexRoute
+  '/account/notifications': typeof accountAccountAuthedNotificationsRoute
+  '/account/phone': typeof accountAccountAuthedPhoneRoute
+  '/account/profile': typeof accountAccountAuthedProfileRoute
+  '/account/refunds': typeof accountAccountAuthedRefundsRoute
+  '/account/security': typeof accountAccountAuthedSecurityRoute
+  '/account/tickets': typeof accountAccountAuthedTicketsRoute
+  '/account/verify-email': typeof accountAccountAuthedVerifyEmailRoute
+  '/account/wallet': typeof accountAccountAuthedWalletRoute
   '/account/orders': typeof shopAuthedAccountOrdersRoute
-  '/account': typeof shopAuthedAccountIndexRoute
   '/admin/customers': typeof AdminAuthedCustomersIndexRoute
   '/admin/orders': typeof AdminAuthedOrdersIndexRoute
   '/admin/products': typeof AdminAuthedProductsIndexRoute
+  '/account/addresses/new': typeof accountAccountAuthedAddressesNewRoute
+  '/account/addresses': typeof accountAccountAuthedAddressesIndexRoute
+  '/account/addresses/$addressId/edit': typeof accountAccountAuthedAddressesAddressIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(auth)': typeof authRouteRouteWithChildren
   '/(marketing)': typeof marketingRouteRouteWithChildren
   '/(shop)': typeof shopRouteRouteWithChildren
+  '/(account)/account': typeof accountAccountRouteRouteWithChildren
   '/(shop)/_authed': typeof shopAuthedRouteRouteWithChildren
   '/admin/_authed': typeof AdminAuthedRouteRouteWithChildren
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
@@ -211,23 +341,38 @@ export interface FileRoutesById {
   '/(auth)/signup': typeof authSignupRoute
   '/(auth)/verify': typeof authVerifyRoute
   '/(shop)/cart': typeof shopCartRoute
+  '/(shop)/help': typeof shopHelpRoute
   '/admin/login': typeof AdminLoginRoute
   '/(marketing)/': typeof marketingIndexRoute
+  '/(account)/account/_authed': typeof accountAccountAuthedRouteRouteWithChildren
+  '/(account)/account/favourites': typeof accountAccountFavouritesRoute
   '/(shop)/_authed/checkout': typeof shopAuthedCheckoutRoute
   '/(shop)/_authed/verify-identity': typeof shopAuthedVerifyIdentityRoute
   '/(shop)/products/$slug': typeof shopProductsSlugRoute
+  '/(account)/account/': typeof accountAccountIndexRoute
   '/(shop)/products/': typeof shopProductsIndexRoute
   '/admin/_authed/': typeof AdminAuthedIndexRoute
+  '/(account)/account/_authed/notifications': typeof accountAccountAuthedNotificationsRoute
+  '/(account)/account/_authed/phone': typeof accountAccountAuthedPhoneRoute
+  '/(account)/account/_authed/profile': typeof accountAccountAuthedProfileRoute
+  '/(account)/account/_authed/refunds': typeof accountAccountAuthedRefundsRoute
+  '/(account)/account/_authed/security': typeof accountAccountAuthedSecurityRoute
+  '/(account)/account/_authed/tickets': typeof accountAccountAuthedTicketsRoute
+  '/(account)/account/_authed/verify-email': typeof accountAccountAuthedVerifyEmailRoute
+  '/(account)/account/_authed/wallet': typeof accountAccountAuthedWalletRoute
   '/(shop)/_authed/account/orders': typeof shopAuthedAccountOrdersRoute
-  '/(shop)/_authed/account/': typeof shopAuthedAccountIndexRoute
   '/admin/_authed/customers/': typeof AdminAuthedCustomersIndexRoute
   '/admin/_authed/orders/': typeof AdminAuthedOrdersIndexRoute
   '/admin/_authed/products/': typeof AdminAuthedProductsIndexRoute
+  '/(account)/account/_authed/addresses/new': typeof accountAccountAuthedAddressesNewRoute
+  '/(account)/account/_authed/addresses/': typeof accountAccountAuthedAddressesIndexRoute
+  '/(account)/account/_authed/addresses/$addressId/edit': typeof accountAccountAuthedAddressesAddressIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
     | '/admin'
     | '/forgot-password'
     | '/login'
@@ -236,17 +381,30 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify'
     | '/cart'
+    | '/help'
     | '/admin/login'
+    | '/account/favourites'
     | '/checkout'
     | '/verify-identity'
     | '/products/$slug'
+    | '/account/'
     | '/products/'
     | '/admin/'
+    | '/account/notifications'
+    | '/account/phone'
+    | '/account/profile'
+    | '/account/refunds'
+    | '/account/security'
+    | '/account/tickets'
+    | '/account/verify-email'
+    | '/account/wallet'
     | '/account/orders'
-    | '/account/'
     | '/admin/customers/'
     | '/admin/orders/'
     | '/admin/products/'
+    | '/account/addresses/new'
+    | '/account/addresses/'
+    | '/account/addresses/$addressId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -257,22 +415,36 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verify'
     | '/cart'
+    | '/help'
     | '/admin/login'
+    | '/account'
+    | '/account/favourites'
     | '/checkout'
     | '/verify-identity'
     | '/products/$slug'
     | '/products'
     | '/admin'
+    | '/account/notifications'
+    | '/account/phone'
+    | '/account/profile'
+    | '/account/refunds'
+    | '/account/security'
+    | '/account/tickets'
+    | '/account/verify-email'
+    | '/account/wallet'
     | '/account/orders'
-    | '/account'
     | '/admin/customers'
     | '/admin/orders'
     | '/admin/products'
+    | '/account/addresses/new'
+    | '/account/addresses'
+    | '/account/addresses/$addressId/edit'
   id:
     | '__root__'
     | '/(auth)'
     | '/(marketing)'
     | '/(shop)'
+    | '/(account)/account'
     | '/(shop)/_authed'
     | '/admin/_authed'
     | '/(auth)/forgot-password'
@@ -282,24 +454,39 @@ export interface FileRouteTypes {
     | '/(auth)/signup'
     | '/(auth)/verify'
     | '/(shop)/cart'
+    | '/(shop)/help'
     | '/admin/login'
     | '/(marketing)/'
+    | '/(account)/account/_authed'
+    | '/(account)/account/favourites'
     | '/(shop)/_authed/checkout'
     | '/(shop)/_authed/verify-identity'
     | '/(shop)/products/$slug'
+    | '/(account)/account/'
     | '/(shop)/products/'
     | '/admin/_authed/'
+    | '/(account)/account/_authed/notifications'
+    | '/(account)/account/_authed/phone'
+    | '/(account)/account/_authed/profile'
+    | '/(account)/account/_authed/refunds'
+    | '/(account)/account/_authed/security'
+    | '/(account)/account/_authed/tickets'
+    | '/(account)/account/_authed/verify-email'
+    | '/(account)/account/_authed/wallet'
     | '/(shop)/_authed/account/orders'
-    | '/(shop)/_authed/account/'
     | '/admin/_authed/customers/'
     | '/admin/_authed/orders/'
     | '/admin/_authed/products/'
+    | '/(account)/account/_authed/addresses/new'
+    | '/(account)/account/_authed/addresses/'
+    | '/(account)/account/_authed/addresses/$addressId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   authRouteRoute: typeof authRouteRouteWithChildren
   marketingRouteRoute: typeof marketingRouteRouteWithChildren
   shopRouteRoute: typeof shopRouteRouteWithChildren
+  accountAccountRouteRoute: typeof accountAccountRouteRouteWithChildren
   AdminAuthedRouteRoute: typeof AdminAuthedRouteRouteWithChildren
   AdminLoginRoute: typeof AdminLoginRoute
 }
@@ -325,6 +512,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof shopRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(account)/account': {
+      id: '/(account)/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof accountAccountRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/forgot-password': {
@@ -390,6 +584,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof shopCartRouteImport
       parentRoute: typeof shopRouteRoute
     }
+    '/(shop)/help': {
+      id: '/(shop)/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof shopHelpRouteImport
+      parentRoute: typeof shopRouteRoute
+    }
     '/admin/_authed': {
       id: '/admin/_authed'
       path: '/admin'
@@ -403,6 +604,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/login'
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/(account)/account/': {
+      id: '/(account)/account/'
+      path: '/'
+      fullPath: '/account/'
+      preLoaderRoute: typeof accountAccountIndexRouteImport
+      parentRoute: typeof accountAccountRouteRoute
+    }
+    '/(account)/account/_authed': {
+      id: '/(account)/account/_authed'
+      path: ''
+      fullPath: '/account'
+      preLoaderRoute: typeof accountAccountAuthedRouteRouteImport
+      parentRoute: typeof accountAccountRouteRoute
+    }
+    '/(account)/account/favourites': {
+      id: '/(account)/account/favourites'
+      path: '/favourites'
+      fullPath: '/account/favourites'
+      preLoaderRoute: typeof accountAccountFavouritesRouteImport
+      parentRoute: typeof accountAccountRouteRoute
     }
     '/(shop)/_authed/checkout': {
       id: '/(shop)/_authed/checkout'
@@ -439,12 +661,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuthedIndexRouteImport
       parentRoute: typeof AdminAuthedRouteRoute
     }
-    '/(shop)/_authed/account/': {
-      id: '/(shop)/_authed/account/'
-      path: '/account'
-      fullPath: '/account/'
-      preLoaderRoute: typeof shopAuthedAccountIndexRouteImport
-      parentRoute: typeof shopAuthedRouteRoute
+    '/(account)/account/_authed/notifications': {
+      id: '/(account)/account/_authed/notifications'
+      path: '/notifications'
+      fullPath: '/account/notifications'
+      preLoaderRoute: typeof accountAccountAuthedNotificationsRouteImport
+      parentRoute: typeof accountAccountAuthedRouteRoute
+    }
+    '/(account)/account/_authed/phone': {
+      id: '/(account)/account/_authed/phone'
+      path: '/phone'
+      fullPath: '/account/phone'
+      preLoaderRoute: typeof accountAccountAuthedPhoneRouteImport
+      parentRoute: typeof accountAccountAuthedRouteRoute
+    }
+    '/(account)/account/_authed/profile': {
+      id: '/(account)/account/_authed/profile'
+      path: '/profile'
+      fullPath: '/account/profile'
+      preLoaderRoute: typeof accountAccountAuthedProfileRouteImport
+      parentRoute: typeof accountAccountAuthedRouteRoute
+    }
+    '/(account)/account/_authed/refunds': {
+      id: '/(account)/account/_authed/refunds'
+      path: '/refunds'
+      fullPath: '/account/refunds'
+      preLoaderRoute: typeof accountAccountAuthedRefundsRouteImport
+      parentRoute: typeof accountAccountAuthedRouteRoute
+    }
+    '/(account)/account/_authed/security': {
+      id: '/(account)/account/_authed/security'
+      path: '/security'
+      fullPath: '/account/security'
+      preLoaderRoute: typeof accountAccountAuthedSecurityRouteImport
+      parentRoute: typeof accountAccountAuthedRouteRoute
+    }
+    '/(account)/account/_authed/tickets': {
+      id: '/(account)/account/_authed/tickets'
+      path: '/tickets'
+      fullPath: '/account/tickets'
+      preLoaderRoute: typeof accountAccountAuthedTicketsRouteImport
+      parentRoute: typeof accountAccountAuthedRouteRoute
+    }
+    '/(account)/account/_authed/verify-email': {
+      id: '/(account)/account/_authed/verify-email'
+      path: '/verify-email'
+      fullPath: '/account/verify-email'
+      preLoaderRoute: typeof accountAccountAuthedVerifyEmailRouteImport
+      parentRoute: typeof accountAccountAuthedRouteRoute
+    }
+    '/(account)/account/_authed/wallet': {
+      id: '/(account)/account/_authed/wallet'
+      path: '/wallet'
+      fullPath: '/account/wallet'
+      preLoaderRoute: typeof accountAccountAuthedWalletRouteImport
+      parentRoute: typeof accountAccountAuthedRouteRoute
     }
     '/(shop)/_authed/account/orders': {
       id: '/(shop)/_authed/account/orders'
@@ -473,6 +744,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/products/'
       preLoaderRoute: typeof AdminAuthedProductsIndexRouteImport
       parentRoute: typeof AdminAuthedRouteRoute
+    }
+    '/(account)/account/_authed/addresses/': {
+      id: '/(account)/account/_authed/addresses/'
+      path: '/addresses'
+      fullPath: '/account/addresses/'
+      preLoaderRoute: typeof accountAccountAuthedAddressesIndexRouteImport
+      parentRoute: typeof accountAccountAuthedRouteRoute
+    }
+    '/(account)/account/_authed/addresses/new': {
+      id: '/(account)/account/_authed/addresses/new'
+      path: '/addresses/new'
+      fullPath: '/account/addresses/new'
+      preLoaderRoute: typeof accountAccountAuthedAddressesNewRouteImport
+      parentRoute: typeof accountAccountAuthedRouteRoute
+    }
+    '/(account)/account/_authed/addresses/$addressId/edit': {
+      id: '/(account)/account/_authed/addresses/$addressId/edit'
+      path: '/addresses/$addressId/edit'
+      fullPath: '/account/addresses/$addressId/edit'
+      preLoaderRoute: typeof accountAccountAuthedAddressesAddressIdEditRouteImport
+      parentRoute: typeof accountAccountAuthedRouteRoute
     }
   }
 }
@@ -515,14 +807,12 @@ interface shopAuthedRouteRouteChildren {
   shopAuthedCheckoutRoute: typeof shopAuthedCheckoutRoute
   shopAuthedVerifyIdentityRoute: typeof shopAuthedVerifyIdentityRoute
   shopAuthedAccountOrdersRoute: typeof shopAuthedAccountOrdersRoute
-  shopAuthedAccountIndexRoute: typeof shopAuthedAccountIndexRoute
 }
 
 const shopAuthedRouteRouteChildren: shopAuthedRouteRouteChildren = {
   shopAuthedCheckoutRoute: shopAuthedCheckoutRoute,
   shopAuthedVerifyIdentityRoute: shopAuthedVerifyIdentityRoute,
   shopAuthedAccountOrdersRoute: shopAuthedAccountOrdersRoute,
-  shopAuthedAccountIndexRoute: shopAuthedAccountIndexRoute,
 }
 
 const shopAuthedRouteRouteWithChildren = shopAuthedRouteRoute._addFileChildren(
@@ -532,6 +822,7 @@ const shopAuthedRouteRouteWithChildren = shopAuthedRouteRoute._addFileChildren(
 interface shopRouteRouteChildren {
   shopAuthedRouteRoute: typeof shopAuthedRouteRouteWithChildren
   shopCartRoute: typeof shopCartRoute
+  shopHelpRoute: typeof shopHelpRoute
   shopProductsSlugRoute: typeof shopProductsSlugRoute
   shopProductsIndexRoute: typeof shopProductsIndexRoute
 }
@@ -539,6 +830,7 @@ interface shopRouteRouteChildren {
 const shopRouteRouteChildren: shopRouteRouteChildren = {
   shopAuthedRouteRoute: shopAuthedRouteRouteWithChildren,
   shopCartRoute: shopCartRoute,
+  shopHelpRoute: shopHelpRoute,
   shopProductsSlugRoute: shopProductsSlugRoute,
   shopProductsIndexRoute: shopProductsIndexRoute,
 }
@@ -546,6 +838,59 @@ const shopRouteRouteChildren: shopRouteRouteChildren = {
 const shopRouteRouteWithChildren = shopRouteRoute._addFileChildren(
   shopRouteRouteChildren,
 )
+
+interface accountAccountAuthedRouteRouteChildren {
+  accountAccountAuthedNotificationsRoute: typeof accountAccountAuthedNotificationsRoute
+  accountAccountAuthedPhoneRoute: typeof accountAccountAuthedPhoneRoute
+  accountAccountAuthedProfileRoute: typeof accountAccountAuthedProfileRoute
+  accountAccountAuthedRefundsRoute: typeof accountAccountAuthedRefundsRoute
+  accountAccountAuthedSecurityRoute: typeof accountAccountAuthedSecurityRoute
+  accountAccountAuthedTicketsRoute: typeof accountAccountAuthedTicketsRoute
+  accountAccountAuthedVerifyEmailRoute: typeof accountAccountAuthedVerifyEmailRoute
+  accountAccountAuthedWalletRoute: typeof accountAccountAuthedWalletRoute
+  accountAccountAuthedAddressesNewRoute: typeof accountAccountAuthedAddressesNewRoute
+  accountAccountAuthedAddressesIndexRoute: typeof accountAccountAuthedAddressesIndexRoute
+  accountAccountAuthedAddressesAddressIdEditRoute: typeof accountAccountAuthedAddressesAddressIdEditRoute
+}
+
+const accountAccountAuthedRouteRouteChildren: accountAccountAuthedRouteRouteChildren =
+  {
+    accountAccountAuthedNotificationsRoute:
+      accountAccountAuthedNotificationsRoute,
+    accountAccountAuthedPhoneRoute: accountAccountAuthedPhoneRoute,
+    accountAccountAuthedProfileRoute: accountAccountAuthedProfileRoute,
+    accountAccountAuthedRefundsRoute: accountAccountAuthedRefundsRoute,
+    accountAccountAuthedSecurityRoute: accountAccountAuthedSecurityRoute,
+    accountAccountAuthedTicketsRoute: accountAccountAuthedTicketsRoute,
+    accountAccountAuthedVerifyEmailRoute: accountAccountAuthedVerifyEmailRoute,
+    accountAccountAuthedWalletRoute: accountAccountAuthedWalletRoute,
+    accountAccountAuthedAddressesNewRoute:
+      accountAccountAuthedAddressesNewRoute,
+    accountAccountAuthedAddressesIndexRoute:
+      accountAccountAuthedAddressesIndexRoute,
+    accountAccountAuthedAddressesAddressIdEditRoute:
+      accountAccountAuthedAddressesAddressIdEditRoute,
+  }
+
+const accountAccountAuthedRouteRouteWithChildren =
+  accountAccountAuthedRouteRoute._addFileChildren(
+    accountAccountAuthedRouteRouteChildren,
+  )
+
+interface accountAccountRouteRouteChildren {
+  accountAccountAuthedRouteRoute: typeof accountAccountAuthedRouteRouteWithChildren
+  accountAccountFavouritesRoute: typeof accountAccountFavouritesRoute
+  accountAccountIndexRoute: typeof accountAccountIndexRoute
+}
+
+const accountAccountRouteRouteChildren: accountAccountRouteRouteChildren = {
+  accountAccountAuthedRouteRoute: accountAccountAuthedRouteRouteWithChildren,
+  accountAccountFavouritesRoute: accountAccountFavouritesRoute,
+  accountAccountIndexRoute: accountAccountIndexRoute,
+}
+
+const accountAccountRouteRouteWithChildren =
+  accountAccountRouteRoute._addFileChildren(accountAccountRouteRouteChildren)
 
 interface AdminAuthedRouteRouteChildren {
   AdminAuthedIndexRoute: typeof AdminAuthedIndexRoute
@@ -568,6 +913,7 @@ const rootRouteChildren: RootRouteChildren = {
   authRouteRoute: authRouteRouteWithChildren,
   marketingRouteRoute: marketingRouteRouteWithChildren,
   shopRouteRoute: shopRouteRouteWithChildren,
+  accountAccountRouteRoute: accountAccountRouteRouteWithChildren,
   AdminAuthedRouteRoute: AdminAuthedRouteRouteWithChildren,
   AdminLoginRoute: AdminLoginRoute,
 }

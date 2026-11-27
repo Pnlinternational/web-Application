@@ -101,7 +101,7 @@ export const codeSchema = z.object({
 
 export type CodeInput = z.infer<typeof codeSchema>;
 
-const strongPasswordSchema = z
+export const strongPasswordSchema = z
   .string()
   .max(128, "Use at most 128 characters")
   .refine(isStrongPassword, PASSWORD_HINT);

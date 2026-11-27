@@ -42,6 +42,7 @@
   --color-disabled: light-dark(#e4e7f0, #252c52);
   --color-danger-ink: light-dark(#a70f15, #ff9a9d);
   --color-danger-tint: light-dark(#fce9ea, #3b1520);
+  --color-success-tint: light-dark(#e4f3ec, #12301f);
   /* Navy brand panel (auth): chip fill and sub-text on navy. */
   --color-primary-chip: #38499a;
   --color-on-primary-muted: #dde2f4;
@@ -65,9 +66,18 @@
   --text-h2: 1.625rem;
   --text-h2--line-height: 2rem;
   --text-h2--font-weight: 600;
+  --text-page-title: 1.875rem;
+  --text-page-title--line-height: 2.25rem;
+  --text-page-title--font-weight: 600;
+  --text-bar-title: 1.375rem;
+  --text-bar-title--line-height: 1.75rem;
+  --text-bar-title--font-weight: 600;
   --text-section: 1.25rem;
   --text-section--line-height: 1.625rem;
   --text-section--font-weight: 500;
+  --text-section-sm: 1.125rem;
+  --text-section-sm--line-height: 1.5rem;
+  --text-section-sm--font-weight: 500;
   --text-card-title: 1.375rem;
   --text-card-title--line-height: 1.625rem;
   --text-card-title--font-weight: 600;
@@ -127,6 +137,58 @@
 
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-ring;
+  }
+}
+
+/*
+ * Modal dialogs (components/ui/dialog.tsx): fade + slight scale from centre, 200ms ease-out in,
+ * faster out. Modals stay centred, so no trigger-based transform-origin. Reduced motion keeps
+ * the fade only (see the rule at the end of this file).
+ */
+@layer components {
+  .app-dialog {
+    opacity: 1;
+    transform: scale(1);
+    transition:
+      opacity 160ms var(--ease-out),
+      transform 160ms var(--ease-out),
+      overlay 160ms allow-discrete,
+      display 160ms allow-discrete;
+
+    &[open] {
+      transition-duration: 200ms;
+    }
+
+    &:not([open]) {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+
+    @starting-style {
+      &[open] {
+        opacity: 0;
+        transform: scale(0.96);
+      }
+    }
+
+    &::backdrop {
+      background-color: rgb(20 27 60 / 0.55);
+      opacity: 1;
+      transition:
+        opacity 200ms var(--ease-out),
+        overlay 200ms allow-discrete,
+        display 200ms allow-discrete;
+    }
+
+    &:not([open])::backdrop {
+      opacity: 0;
+    }
+
+    @starting-style {
+      &[open]::backdrop {
+        opacity: 0;
+      }
+    }
   }
 }
 
