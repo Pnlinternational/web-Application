@@ -65,6 +65,32 @@
   the constant, the coming-soon branch in `routes/(shop)/products/index.tsx`, and `products-live-route.test.tsx`
   (and the coming-soon case in `products-route.test.tsx`).
 
+- **Account area (web):** from the canvas `project/web/WebAccount.dc.html` (snapshot in `design/`). Own shell in
+  `routes/(account)/account/route.tsx` → `AccountLayout`: desktop header (logo, Continue shopping, bell, avatar), 280px
+  sidebar, page title; under 900px a back bar (sub-pages) or the bottom tab bar (overview, guest). Each route sets
+  `staticData.account` (`AccountRouteMeta` in `router.tsx`: title, mobileBar, backTo, overview). `/account` and
+  `/account/favourites` are open to guests; everything else sits under `(account)/account/_authed` (same guard as shop).
+  `ACCOUNT_NAV` (`features/account/constants.ts`) feeds the sidebar and mobile rows. Orders stays in `(shop)` with
+  `?status=` from `features/orders/status.ts` (the one status→group mapping).
+- **Account mocks:** the API has no profile name/email, wallet, KYC status, order counts, addresses, favourites,
+  notifications or change-password endpoints. Each feature's `get*Service(user)` returns the in-memory
+  `features/account/mock-backend.ts` (per-user store, design sample data in the user's currency, 300ms latency, 0 in
+  tests, `resetMockBackend`/`editMockDb` for tests). Replace each service body with axios calls when endpoints ship.
+  Mocks run in every build (accepted: the site isn't live). The mock rejects the current password `wrong-password`.
+- **Shared UI added:** `components/ui/dialog.tsx` (native `<dialog>` + `ConfirmDialog`; motion in `app.css .app-dialog`),
+  `tabs.tsx` (roving tabindex), `empty-state`, `avatar`, `stale-note` (offline / failed refresh), `components/icons/icon.tsx`
+  (design glyph paths). Tokens added on request: `text-page-title`, `text-bar-title`, `text-section-sm`, `success-tint`.
+  `formatPrice` (`features/market/market.ts`) shows "₦24,500" via `formatMoney(..., { trimZeroFraction })`.
+- **Favourites:** one store (`features/favourites/use-favourites.ts`): account list (optimistic add/remove with
+  rollback) or the browser list for guests (`guest-store.ts`, `pnl.favourites`). `FavouritesSync` (shop + account
+  layouts) merges browser favourites into the account after sign-in and clears them only on success. Product cards
+  carry the heart.
+- **Sign out:** `useLogoutMutation({ redirectTo })` clears caches, sets the session to `null` (not refetched) and
+  navigates to the guest Account, even when `auth/logout` fails. Gap: a failed call leaves the refresh cookie valid
+  server-side. "Forgot password?" on Security signs out first, because `(auth)` routes bounce signed-in users.
+- **Geocoding:** stub (`features/geocoding/services.ts`, bounding boxes, nothing leaves the browser); a real provider
+  needs sign-off (paid/key). Regions are config (`features/addresses/regions.ts`), not delivery zones.
+
 ## API contract
 
 - Source of truth: staging OpenAPI at `https://api-staging.pnlinternationalltd.com/docs/openapi.json` (outside `/v1`,
@@ -79,6 +105,9 @@
   `GET me` → `{ id, phone, market: NG|GH, created_at }` (no name). `me/sessions`, `me/sessions/others/revoke`,
   `DELETE me/sessions/{id}`.
 - `TERMS_VERSION` (`src/features/auth/constants.ts`) is a placeholder until the API team confirms the value.
+- 2026-11-26 recheck: new `me/phone` + `me/phone/verify` are for social onboarding only (not "change phone");
+  `me/identities` lists masked sign-in methods. Neither covers the account screens, so Change phone and Verify email
+  are placeholders.
 - Still assumed: admin auth paths, `products`, `admin/products`, `admin/stats/dashboard`, list and money shapes.
 - Not yet integrated: device keys (`device_proof`, so every web sign-in asks for a code), Turnstile, email/OIDC,
   staff auth.
@@ -129,3 +158,13 @@
   rebuild of auth from the canvas rather than token-only restyling.
 - Headless Chrome (`--headless=new`) won't lay out narrower than 500px; for phone widths drive it over CDP with
   `Emulation.setDeviceMetricsOverride`.
+- To see signed-in pages in the browser without a staging account, intercept `*/v1/auth/refresh*` and `*/v1/me*`
+  with CDP `Fetch.enable` + `Fetch.fulfillRequest` (tokens + a fake user). No app code changes needed.
+- Route tests that render whole account pages: preload route chunks in `beforeAll` (`preloadRouteChunks`,
+  `src/test/account.ts`) and allow 15s per test; cold chunk transforms under a parallel run blew the 5s default.
+- Sonner's toast list is module state: call `toast.dismiss()` in `afterEach` or one test's toasts leak into the next.
+  jsdom lacks pointer capture (sonner calls it on press); `src/test/setup.ts` shims it.
+- In jsdom, Tailwind's `hidden desktop:block` doesn't apply, so mobile and desktop copies are both in the DOM:
+  use `getAll*` or `checkVisibility()` in the browser.
+- **Redirected (account):** you chose mocks in every build, adding the missing type tokens rather than reusing the
+  closest ones, and a stub geocoder over Nominatim.
