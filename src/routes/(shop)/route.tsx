@@ -2,6 +2,7 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { NotFound } from "@/components/errors/not-found";
 import { ShopHeader } from "@/components/layout/shop-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { FavouritesSync } from "@/features/favourites/components/favourites-sync";
 
 export const Route = createFileRoute("/(shop)")({
   component: ShopLayout,
@@ -11,6 +12,7 @@ export const Route = createFileRoute("/(shop)")({
 function ShopLayout() {
   return (
     <div className="flex min-h-dvh flex-col">
+      <FavouritesSync />
       <ShopHeader />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
         <Outlet />

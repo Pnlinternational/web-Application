@@ -39,4 +39,20 @@ declare module "@tanstack/react-router" {
   interface Register {
     router: ReturnType<typeof createAppRouter>;
   }
+
+  interface StaticDataRouteOption {
+    /** Account area chrome; read by AccountLayout from the deepest matched route. */
+    account?: AccountRouteMeta;
+  }
+}
+
+export interface AccountRouteMeta {
+  /** Desktop page title and mobile bar title. */
+  title: string;
+  /** Under 900px: bottom tab bar (overview, guest) or a back bar (sub-pages). */
+  mobileBar: "tabs" | "back";
+  /** Where the mobile back arrow goes; defaults to /account. */
+  backTo?: "/account" | "/account/addresses" | "/account/profile";
+  /** Overview: greet by name on desktop and show the navy profile header on mobile. */
+  overview?: boolean;
 }

@@ -45,3 +45,16 @@ export function formatNumber(
 export function formatRelative(value: DateInput, now: DateInput = Date.now()) {
   return toDayjs(value).from(toDayjs(now));
 }
+
+/** Same calendar day in the device's time zone. */
+export function isSameLocalDay(a: DateInput, b: DateInput) {
+  return toDayjs(a).isSame(toDayjs(b), "day");
+}
+
+export function isToday(value: DateInput, now: DateInput = Date.now()) {
+  return isSameLocalDay(value, now);
+}
+
+export function isYesterday(value: DateInput, now: DateInput = Date.now()) {
+  return isSameLocalDay(value, toDayjs(now).subtract(1, "day").toDate());
+}

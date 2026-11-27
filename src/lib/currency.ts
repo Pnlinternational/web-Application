@@ -25,6 +25,8 @@ type CurrencyDisplay = "symbol" | "narrowSymbol" | "code" | "name";
 export interface FormatMoneyOptions {
   locale?: string;
   display?: CurrencyDisplay;
+  /** "₦24,500" instead of "₦24,500.00" when there are no minor units; "₦24,500.50" stays. */
+  trimZeroFraction?: boolean;
 }
 
 const formatters = new Map<string, Intl.NumberFormat>();
@@ -33,14 +35,16 @@ function getFormatter(
   locale: string | undefined,
   currency: CurrencyCode,
   display: CurrencyDisplay,
+  wholeUnits = false,
 ) {
-  const key = `${locale ?? ""}|${currency}|${display}`;
+  const key = `${locale ?? ""}|${currency}|${display}|${wholeUnits}`;
   let formatter = formatters.get(key);
   if (!formatter) {
     formatter = new Intl.NumberFormat(locale, {
       style: "currency",
       currency,
       currencyDisplay: display,
+      ...(wholeUnits ? { minimumFractionDigits: 0, maximumFractionDigits: 0 } : {}),
     });
     formatters.set(key, formatter);
   }
@@ -67,9 +71,14 @@ export function fromMinor(money: Money) {
   return money.amount / 10 ** currencyExponent(money.currency);
 }
 
-export function formatMoney(money: Money, { locale, display = "symbol" }: FormatMoneyOptions = {}) {
+export function formatMoney(
+  money: Money,
+  { locale, display = "symbol", trimZeroFraction = false }: FormatMoneyOptions = {},
+) {
   assertInteger(money.amount, "Money amount (minor units)");
-  return getFormatter(locale, money.currency, display).format(fromMinor(money));
+  const value = fromMinor(money);
+  const wholeUnits = trimZeroFraction && Number.isInteger(value);
+  return getFormatter(locale, money.currency, display, wholeUnits).format(value);
 }
 
 const DECIMAL_PATTERN = /^(-)?(\d+)(?:\.(\d+))?$/;

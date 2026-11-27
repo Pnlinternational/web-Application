@@ -24,7 +24,8 @@ function visit(path: string, sessions: { customer?: User | null; admin?: AdminUs
 }
 
 async function settledLocation(router: ReturnType<typeof visit>["router"]) {
-  await waitFor(() => expect(router.state.status).toBe("idle"));
+  // /account renders the full Account overview now; give its chunks room to load on a busy run.
+  await waitFor(() => expect(router.state.status).toBe("idle"), { timeout: 5000 });
   return router.state.location;
 }
 

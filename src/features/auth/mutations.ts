@@ -1,6 +1,7 @@
 import { type QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import type { Idempotent } from "@/api/idempotency";
+import { AFTER_SIGN_OUT_PATH } from "./constants";
 import { authKeys } from "./query-keys";
 import type { LoginInput, RegisterInput, User } from "./schemas";
 import { getAuthService } from "./services";
@@ -103,17 +104,27 @@ export function useCompletePasswordResetMutation() {
   });
 }
 
-/** Call as `logout.mutate(createIdempotencyKey())` when the user taps "Sign out". */
-export function useLogoutMutation() {
+/**
+ * Call as `logout.mutate(createIdempotencyKey())` when the user confirms "Sign out".
+ * Signs out on this device even if the server call fails: caches are cleared and the session is
+ * set to null (not refetched, which could sign the user straight back in), then it navigates to
+ * `redirectTo` (the guest Account by default). The server-side refresh cookie can only be revoked
+ * by the API, so a failed call can leave it valid until it expires.
+ */
+export function useLogoutMutation({
+  redirectTo = AFTER_SIGN_OUT_PATH,
+}: { redirectTo?: "/account" | "/forgot-password" } = {}) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { logoutCustomer } = getAuthService();
 
   return useMutation({
     mutationFn: logoutCustomer,
+    meta: { silent: true },
     onSettled: async () => {
       queryClient.clear();
-      await router.invalidate();
+      queryClient.setQueryData(authKeys.session(), null);
+      await router.navigate({ to: redirectTo });
     },
   });
 }

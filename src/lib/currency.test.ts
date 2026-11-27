@@ -36,6 +36,15 @@ describe("formatMoney", () => {
   it("rejects non-integer minor amounts", () => {
     expect(() => formatMoney({ amount: 10.5, currency: "USD" })).toThrow(/integer/);
   });
+
+  it("drops a zero fraction only when asked", () => {
+    const options = { locale: "en-NG", display: "narrowSymbol", trimZeroFraction: true } as const;
+    expect(formatMoney({ amount: 2_450_000, currency: "NGN" }, options)).toBe("₦24,500");
+    expect(formatMoney({ amount: 2_450_050, currency: "NGN" }, options)).toBe("₦24,500.50");
+    expect(formatMoney({ amount: 2_450_000, currency: "NGN" }, { locale: "en-NG" })).toBe(
+      "₦24,500.00",
+    );
+  });
 });
 
 describe("toMinor / fromMinor", () => {
